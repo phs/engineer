@@ -3,7 +3,3 @@
 It makes engines, get it?
 
 This is extra-super-alpha-what-are-you-even-doing-here.  You have been warned.
-
-== Usage
-
-rails the_most_best_app [options] -m http://github.com/phs/engineer/raw/master/lib/engineer.rb
