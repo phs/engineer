@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Phil Smith"]
-  s.date = %q{2010-03-02}
+  s.date = %q{2010-03-03}
   s.description = %q{Engineer gives you rake tasks to wrap your rails 3 as a gem, equipping it with tasks to handle migrations and public files. *lies*}
   s.email = %q{phil.h.smith@gmail.com}
   s.extra_rdoc_files = [
@@ -21,7 +21,10 @@ Gem::Specification.new do |s|
      "README.rdoc",
      "Rakefile",
      "VERSION",
-     "lib/engineer.rb"
+     "lib/engineer.rb",
+     "lib/generators/engineer/install/USAGE",
+     "lib/generators/engineer/install/install_generator.rb",
+     "lib/generators/engineer/install/templates/lib/tasks/engineer.rake"
   ]
   s.homepage = %q{http://github.com/phs/engineer}
   s.rdoc_options = ["--charset=UTF-8"]
