@@ -17,15 +17,11 @@ Gem::Specification.new do |s|
      "README.rdoc"
   ]
   s.files = [
-    ".gitignore",
-     "LICENSE",
+    "LICENSE",
      "README.rdoc",
      "Rakefile",
      "VERSION",
-     "lib/engineer.rb",
-     "spec/engine_rake_tasks_spec.rb",
-     "spec/spec.opts",
-     "spec/spec_helper.rb"
+     "lib/engineer.rb"
   ]
   s.homepage = %q{http://github.com/phs/engineer}
   s.rdoc_options = ["--charset=UTF-8"]
