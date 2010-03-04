@@ -22,6 +22,7 @@ Gem::Specification.new do |s|
      "Rakefile",
      "VERSION",
      "lib/engineer.rb",
+     "lib/engineer/tasks.rb",
      "lib/generators/engineer/install/USAGE",
      "lib/generators/engineer/install/install_generator.rb",
      "lib/generators/engineer/install/templates/lib/tasks/engineer.rake"
@@ -41,11 +42,14 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
+      s.add_runtime_dependency(%q<jeweler>, ["= 1.4.0"])
       s.add_development_dependency(%q<rspec>, [">= 1.2.9"])
     else
+      s.add_dependency(%q<jeweler>, ["= 1.4.0"])
       s.add_dependency(%q<rspec>, [">= 1.2.9"])
     end
   else
+    s.add_dependency(%q<jeweler>, ["= 1.4.0"])
     s.add_dependency(%q<rspec>, [">= 1.2.9"])
   end
 end
