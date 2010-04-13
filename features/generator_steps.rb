@@ -1,8 +1,6 @@
 # Inspiration shamelessly stolen from
 # http://gravityblast.com/2009/08/11/testing-rails-generators-with-cucumber/
 
-# $:.unshift(File.join(File.dirname(__FILE__), "..", "lib"))
-
 require "rubygems"
 gem "railties", ">= 3.0.0.beta2"
 
@@ -81,11 +79,6 @@ private
   end
   
   def workspace(path = nil)
-    @workspace ||= File.join(Dir::tmpdir, "engineer-cucumber-#{$$}").tap do |tmpdir|
-      mkdir_p tmpdir
-      at_exit { rm_rf tmpdir }
-    end
-    
     absolute_path = path ? File.join(@workspace, path) : @workspace
     
     if block_given?
@@ -102,6 +95,17 @@ private
     puts message if ENV['VERBOSE'] == 'true'
   end
 
+end
+
+Before do
+  @workspace ||= File.join(Dir::tmpdir, "engineer-cucumber-#{$$}").tap do |tmpdir|
+    mkdir_p tmpdir
+    at_exit { rm_rf tmpdir }
+  end
+end
+
+After do
+  rm_rf @workspace
 end
 
 World(GeneratorHelpers)
