@@ -13,6 +13,8 @@ class String
   end
 end
 
+PROJECT_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
+
 module GeneratorHelpers
   if ENV['VERBOSE'] == 'true'
     include FileUtils::Verbose
@@ -65,8 +67,7 @@ private
   end
 
   def engineer_gem_file
-    project_root = File.expand_path(File.join(File.dirname(__FILE__), '..'))
-    Dir["#{project_root}/pkg/engineer*gem"].first
+    Dir["#{PROJECT_ROOT}/pkg/engineer*gem"].first
   end
 
   def run(cmd)
@@ -109,27 +110,3 @@ After do
 end
 
 World(GeneratorHelpers)
-
-Given "I have a new rails app named $name" do |name|
-  generate_rails_app name
-end
-
-Given "I have a new rails app" do
-  generate_rails_app
-end
-
-Given "I add the engineer gem" do
-  add_engineer_gem
-end
-
-When "I rails g $generator" do |generator|
-  generate generator
-end
-
-Then "I should see output:" do |command_output|
-  latest_output.strip_ansi.strip.should include command_output.strip
-end
-
-When "I rake $rake_task" do |rake_task|
-  rake rake_task
-end
