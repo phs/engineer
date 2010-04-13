@@ -15,7 +15,7 @@ end
 
 PROJECT_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
 
-module GeneratorHelpers
+module Helpers
   if ENV['VERBOSE'] == 'true'
     include FileUtils::Verbose
   else
@@ -109,4 +109,4 @@ After do
   rm_rf @workspace
 end
 
-World(GeneratorHelpers)
+World(Helpers)
