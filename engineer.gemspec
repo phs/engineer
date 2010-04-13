@@ -34,7 +34,6 @@ Gem::Specification.new do |s|
   s.summary = %q{Turn rails 3 apps into engines}
   s.test_files = [
     "spec/engine_rake_tasks_spec.rb",
-     "spec/engineer_install_generator_spec.rb",
      "spec/spec_helper.rb"
   ]
 
@@ -45,13 +44,16 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<jeweler>, [">= 1.4.0"])
       s.add_development_dependency(%q<rspec>, [">= 1.2.9"])
+      s.add_development_dependency(%q<cucumber>, [">= 0.6.4"])
     else
       s.add_dependency(%q<jeweler>, [">= 1.4.0"])
       s.add_dependency(%q<rspec>, [">= 1.2.9"])
+      s.add_dependency(%q<cucumber>, [">= 0.6.4"])
     end
   else
     s.add_dependency(%q<jeweler>, [">= 1.4.0"])
     s.add_dependency(%q<rspec>, [">= 1.2.9"])
+    s.add_dependency(%q<cucumber>, [">= 0.6.4"])
   end
 end
 
