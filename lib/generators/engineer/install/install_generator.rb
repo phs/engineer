@@ -23,6 +23,12 @@ Engineer::Tasks.new do |gem|
   gem.email = "TODO"
   gem.homepage = "TODO"
   gem.authors = ["TODO"]
+  gem.require_path = '.'
+  gem.files =  FileList[
+    "[A-Z]*",
+    "{app,config,lib,public,spec,test,vendor}/**/*",
+    "db/**/*.rb"
+  ]
   # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
 end
 RAKE
