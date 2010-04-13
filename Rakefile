@@ -11,7 +11,7 @@ begin
     gem.homepage = "http://github.com/phs/engineer"
     gem.authors = ["Phil Smith"]
     gem.files =  FileList["[A-Z]*", "{bin,generators,lib,test}/**/*"]
-    gem.add_dependency "jeweler", "1.4.0"
+    gem.add_dependency "jeweler", ">= 1.4.0"
     gem.add_development_dependency "rspec", ">= 1.2.9"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
