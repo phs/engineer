@@ -7,7 +7,6 @@ Feature: Engineer Installation
     Given I have a new rails app named engine
     And I add the engineer gem
   
-  # rails g engineer:install
   Scenario: Install engineer, see my new rake tasks
     When I rails g engineer:install
     Then I should see output:
