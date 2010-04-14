@@ -4,8 +4,7 @@ Feature: Rake Tasks added to Engines
   Since I probably already know how to use jeweler
   
   Background:
-    Given I have a new rails app named my_engine
-    And I add the engineer gem
+    Given I have a new rails app named my_engine, with the engineer gem
     And I rails g engineer:install
   
   Scenario: Creating initial VERSION file

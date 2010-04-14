@@ -111,7 +111,7 @@ private
 
   def gem_home
     @gem_home ||= begin
-      repo_path = in_workspace 'gemrepo'
+      repo_path = in_dir 'gemrepo'
       mkdir_p repo_path
       "GEM_HOME='#{repo_path}'"
     end

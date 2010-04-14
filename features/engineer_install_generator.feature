@@ -4,8 +4,7 @@ Feature: Engineer Installation
   So that I can turn my rails app into an embeddable engine
   
   Background:
-    Given I have a new rails app named my_engine
-    And I add the engineer gem
+    Given I have a new rails app named my_engine, with the engineer gem
   
   Scenario: Install engineer, see my new rake tasks
     When I rails g engineer:install

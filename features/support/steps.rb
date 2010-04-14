@@ -1,12 +1,12 @@
 require File.expand_path(File.dirname(__FILE__) + '/env')
 
-Given "I have a new rails app named $name" do |name|
+Given %r{I have a new rails app named (.*), with the (.*) gems?} do |name, gems|
   generate_rails_app name
-end
-
-When "I add the $gem_file gem" do |gem_file|
-  gem_file = ENGINEER_GEM_FILE if gem_file == 'engineer'
-  add_gem gem_file
+  gems.split(',').each do |gem_file|
+    gem_file.strip!
+    gem_file = ENGINEER_GEM_FILE if gem_file == 'engineer'
+    add_gem gem_file
+  end
 end
 
 When "I rails g $generator" do |generator|
@@ -46,8 +46,7 @@ Then "I should see a $file file" do |file|
 end
 
 Given "I have a finished engine application named $engine" do |engine|
-  Given "I have a new rails app named #{engine}"
-    And "I add the engineer gem"
+  Given "I have a new rails app named #{engine}, with the engineer gem"
     And "I rails g engineer:install"
     And "I rake version:write"
     And "I fill out my Rakefile gemspec"
