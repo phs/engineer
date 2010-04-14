@@ -55,7 +55,6 @@ module Helpers
   def fill_out_the_rakefile_gemspec
     workspace @current_app do
       rakefile = File.read('Rakefile')
-      rakefile.gsub! 'gem.name = "TODO"',                                          "gem.name = \"#{@current_app}\""
       rakefile.gsub! 'gem.summary = %Q{TODO: one-line summary of your gem}',       'gem.summary = %Q{My awesome engine}'
       rakefile.gsub! 'gem.description = %Q{TODO: longer description of your gem}', 'gem.description = %Q{My awesome, beautiful engine}'
       rakefile.gsub! 'gem.email = "TODO"',                                         'gem.email = "awesome-beautiful-me@example.com"'
