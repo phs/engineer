@@ -88,7 +88,7 @@ private
     end
   end
   
-  def in_dir(*path)
+  def in_workspace(*path)
     absolute_path = File.join(SUITE_WIDE_WORKSPACE, *path)
     
     if block_given?
@@ -102,7 +102,7 @@ private
   end
 
   def in_current_scenario(*path, &block)
-    in_dir "current_scenario", *path, &block
+    in_workspace "current_scenario", *path, &block
   end
   
   def in_current_app(*path, &block)
@@ -111,7 +111,7 @@ private
 
   def gem_home
     @gem_home ||= begin
-      repo_path = in_dir 'gemrepo'
+      repo_path = in_workspace 'gemrepo'
       mkdir_p repo_path
       "GEM_HOME='#{repo_path}'"
     end
