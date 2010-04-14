@@ -25,7 +25,7 @@ end
 module Helpers
   def generate_rails_app(name = 'rails_app')
     @current_app = name
-    in_workspace do
+    in_current_scenario do
       run "rails #{name}"
     end
   end
@@ -101,12 +101,12 @@ private
     end
   end
 
-  def in_workspace(*path, &block)
+  def in_current_scenario(*path, &block)
     in_dir "current_scenario", *path, &block
   end
   
   def in_current_app(*path, &block)
-    in_workspace @current_app, *path, &block
+    in_current_scenario @current_app, *path, &block
   end
 
   def gem_home
@@ -129,11 +129,11 @@ SUITE_WIDE_WORKSPACE = File.join(Dir::tmpdir, "engineer-cucumber-#{$$}").tap do 
 end
 
 Before do
-  mkdir_p in_workspace
+  mkdir_p in_current_scenario
 end
 
 After do
-  rm_rf in_workspace
+  rm_rf in_current_scenario
 end
 
 World(Helpers)

@@ -7,7 +7,7 @@ Given %r{I have a new rails app named (.*), with the (.*) gems?} do |name, gems|
     if gem_name == 'engineer'
       gem_file = ENGINEER_GEM_FILE
     else
-      gem_file = Dir["#{in_workspace(gem_name)}/pkg/#{gem_name}-*.gem"].first
+      gem_file = Dir["#{in_current_scenario(gem_name)}/pkg/#{gem_name}-*.gem"].first
     end
     add_gem gem_file
   end
@@ -38,13 +38,13 @@ Then "I should see output:" do |command_output|
 end
 
 Then "$file should contain:" do |file, content|
-  in_workspace do
+  in_current_scenario do
     File.read(file).should include content
   end
 end
 
 Then "I should see a $file file" do |file|
-  in_workspace do
+  in_current_scenario do
     File.exists?(file).should be_true
   end
 end
