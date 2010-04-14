@@ -13,3 +13,11 @@ Feature: Engine Installation into a Host App
       """
         my_engine:install
       """
+
+    When I rails g my_engine:install
+    Then I should see output:
+      """
+             exist  lib/tasks
+            create  lib/tasks/my_engine.rake
+      """
+    
