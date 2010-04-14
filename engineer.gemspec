@@ -33,8 +33,7 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.6}
   s.summary = %q{Turn rails 3 apps into engines}
   s.test_files = [
-    "spec/engine_rake_tasks_spec.rb",
-     "spec/spec_helper.rb"
+    "spec/spec_helper.rb"
   ]
 
   if s.respond_to? :specification_version then
