@@ -6,6 +6,7 @@ Feature: Engine Installation into a Host App
   Background:
     Given I have a finished engine application named my_engine
     And I have a new rails app named host
+    And I add the ../my_engine/pkg/my_engine-0.0.0.gem gem
 
   Scenario: Install my_engine
     When I rails g --help

@@ -3,7 +3,7 @@ class Engineer
     class InstallGenerator < Rails::Generators::Base
 
       def self.source_root
-        @source_root ||= File.expand_path(File.join(File.dirname(__FILE__), 'templates'))
+        @source_root ||= File.expand_path('../templates', __FILE__)
       end
       
       def append_gemspec_to_Rakefile
@@ -20,7 +20,7 @@ Engineer::Tasks.new do |gem|
   gem.email = "TODO"
   gem.homepage = "TODO"
   gem.authors = ["TODO"]
-  gem.require_path = '.'
+  gem.require_path = 'lib'
   gem.files =  FileList[
     "[A-Z]*",
     "{app,config,lib,public,spec,test,vendor}/**/*",
@@ -32,6 +32,10 @@ RAKE
             end
           end
         end
+      end
+
+      def create_install_generator
+        directory '.', File.join("lib", "generators", app_name, "install")
       end
 
     protected

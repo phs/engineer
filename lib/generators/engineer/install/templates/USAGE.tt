@@ -1,0 +1,5 @@
+Description:
+    Install <%= app_name %>
+
+Example:
+    rails generate <%= app_name %>:install

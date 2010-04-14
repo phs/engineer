@@ -4,8 +4,9 @@ Given "I have a new rails app named $name" do |name|
   generate_rails_app name
 end
 
-When "I add the engineer gem" do
-  add_engineer_gem
+When "I add the $gem_file gem" do |gem_file|
+  gem_file = ENGINEER_GEM_FILE if gem_file == 'engineer'
+  add_gem gem_file
 end
 
 When "I rails g $generator" do |generator|

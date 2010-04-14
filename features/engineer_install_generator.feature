@@ -4,7 +4,7 @@ Feature: Engineer Installation
   So that I can turn my rails app into an embeddable engine
   
   Background:
-    Given I have a new rails app named engine
+    Given I have a new rails app named my_engine
     And I add the engineer gem
   
   Scenario: Install engineer, see my new rake tasks
@@ -12,6 +12,10 @@ Feature: Engineer Installation
     Then I should see output:
       """
             append  Rakefile
+            create  lib/generators/my_engine/install
+            create  lib/generators/my_engine/install/install_generator.rb
+            create  lib/generators/my_engine/install/templates/my_engine.rake
+            create  lib/generators/my_engine/install/USAGE
       """
 
     When I rake -T

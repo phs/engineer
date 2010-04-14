@@ -21,10 +21,20 @@ Gem::Specification.new do |s|
      "README.rdoc",
      "Rakefile",
      "VERSION",
+     "features/engine_rake_tasks.feature",
+     "features/engineer_install_generator.feature",
+     "features/host_install_generator.feature",
+     "features/steps/env.rb",
+     "features/steps/steps.rb",
      "lib/engineer.rb",
      "lib/engineer/tasks.rb",
      "lib/generators/engineer/install/USAGE",
-     "lib/generators/engineer/install/install_generator.rb"
+     "lib/generators/engineer/install/install_generator.rb",
+     "lib/generators/engineer/install/templates/USAGE.tt",
+     "lib/generators/engineer/install/templates/install_generator.rb.tt",
+     "lib/generators/engineer/install/templates/templates/%app_name%.rake",
+     "spec/spec.opts",
+     "spec/spec_helper.rb"
   ]
   s.homepage = %q{http://github.com/phs/engineer}
   s.rdoc_options = ["--charset=UTF-8"]

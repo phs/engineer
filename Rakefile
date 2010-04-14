@@ -10,7 +10,7 @@ begin
     gem.email = "phil.h.smith@gmail.com"
     gem.homepage = "http://github.com/phs/engineer"
     gem.authors = ["Phil Smith"]
-    gem.files =  FileList["[A-Z]*", "{bin,generators,lib,test}/**/*"]
+    gem.files =  FileList["[A-Z]*", "{features,lib,spec}/**/*"]
     gem.add_dependency "jeweler", ">= 1.4.0"
     gem.add_development_dependency "rspec", ">= 1.2.9"
     gem.add_development_dependency "cucumber", ">= 0.6.4"

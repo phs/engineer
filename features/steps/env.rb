@@ -30,11 +30,12 @@ module Helpers
     end
   end
   
-  def add_engineer_gem
-    install_engineer_gem_to_workspace_repo
+  def add_gem(gem_file)
     workspace @current_app do
+      gem_name, version = File.basename(gem_file).match(/(.*)-(\d+\.\d+\.\d+)\.gem/)[1..2]
+      install_gem gem_file
       File.open('Gemfile', 'a') do |gemfile|
-        gemfile << "gem 'engineer', '>= 0.0.0'\n"
+        gemfile << "gem '#{gem_name}', '#{version}'\n"
       end
       run "#{gem_home} bundle install"
     end
@@ -70,9 +71,10 @@ module Helpers
   
 private
 
-  def install_engineer_gem_to_workspace_repo
-    @engineer_gem_installed_to_workspace_repo ||= begin
-      run "#{gem_home} gem install --no-rdoc --no-ri #{ENGINEER_GEM_FILE}"
+  def install_gem(gem_file)
+    @installed_gems ||= {}
+    @installed_gems[gem_file] ||= begin
+      run "#{gem_home} gem install --no-rdoc --no-ri #{gem_file}"
       true
     end
   end
