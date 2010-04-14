@@ -23,22 +23,28 @@ else
 end
 
 module Helpers
-  def generate_rails_app(name = 'rails_app')
+  def generate_rails_app(name = 'rails_app', gem_files = [])
     @current_app = name
-    in_current_scenario do
-      run "rails #{name}"
-    end
-  end
-  
-  def add_gem(gem_file)
-    in_current_app do
-      gem_name, version = File.basename(gem_file).match(/(.*)-(\d+\.\d+\.\d+)\.gem/)[1..2]
-      install_gem gem_file
-      File.open('Gemfile', 'a') do |gemfile|
-        gemfile << "gem '#{gem_name}', '#{version}'\n"
+
+    unless File.exists?(in_workspace "apps", name)
+      in_workspace "apps" do
+        run "rails #{name}"
       end
-      run "#{gem_home} bundle install"
+
+      in_workspace "apps", @current_app do
+        gem_files.each do |gem_file|
+          gem_name, version = File.basename(gem_file).match(/(.*)-(\d+\.\d+\.\d+)\.gem/)[1..2]
+          install_gem gem_file
+          File.open('Gemfile', 'a') do |gemfile|
+            gemfile << "gem '#{gem_name}', '#{version}'\n"
+          end
+        end
+
+        run "#{gem_home} bundle install"
+      end
     end
+
+    cp_r in_workspace("apps", @current_app), in_current_app
   end
 
   def generate(generator, options = {})
@@ -64,11 +70,11 @@ module Helpers
       File.open('Rakefile', 'w') { |f| f << rakefile }
     end
   end
-  
+
   def latest_output
     @latest_output
   end
-  
+
 private
 
   def install_gem(gem_file)
@@ -87,10 +93,10 @@ private
       fail unless $?.to_i == 0 or options[:may_fail]
     end
   end
-  
+
   def in_workspace(*path)
     absolute_path = File.join(WORKSPACE, *path)
-    
+
     if block_given?
       Dir.chdir(absolute_path) do
         log "cd #{absolute_path}"
@@ -104,7 +110,7 @@ private
   def in_current_scenario(*path, &block)
     in_workspace "current_scenario", *path, &block
   end
-  
+
   def in_current_app(*path, &block)
     in_current_scenario @current_app, *path, &block
   end
@@ -125,6 +131,7 @@ end
 
 WORKSPACE = File.join(Dir::tmpdir, "engineer-cucumber-#{$$}").tap do |tmpdir|
   mkdir_p tmpdir
+  mkdir_p File.join(tmpdir, 'apps')
   at_exit { rm_rf tmpdir }
 end
 

@@ -1,16 +1,16 @@
 require File.expand_path(File.dirname(__FILE__) + '/env')
 
 Given %r{I have a new rails app named (.*), with the (.*) gems?} do |name, gems|
-  generate_rails_app name
-  gems.split(',').each do |gem_name|
+  gem_files = gems.split(',').collect do |gem_name|
     gem_name.strip!
     if gem_name == 'engineer'
-      gem_file = ENGINEER_GEM_FILE
+      ENGINEER_GEM_FILE
     else
-      gem_file = Dir["#{in_current_scenario(gem_name)}/pkg/#{gem_name}-*.gem"].first
+      Dir["#{in_current_scenario(gem_name)}/pkg/#{gem_name}-*.gem"].first
     end
-    add_gem gem_file
   end
+
+  generate_rails_app name, gem_files
 end
 
 When "I rails g $generator" do |generator|
