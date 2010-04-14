@@ -4,8 +4,12 @@ Feature: Engine Installation into a Host App
   So that I can use it in my app
 
   Background:
-    Given I have a finished engine application named engine
+    Given I have a finished engine application named my_engine
     And I have a new rails app named host
 
-  Scenario: Narf narf
-    Given I even get here
+  Scenario: Install my_engine
+    When I rails g --help
+    Then I should see output:
+      """
+        my_engine:install
+      """
