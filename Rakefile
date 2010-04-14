@@ -52,5 +52,10 @@ Cucumber::Rake::Task.new do |t|
   t.cucumber_opts = %w{--format pretty}
 end
 
+desc "Remove build products"
+task :clean do
+  rm_rf 'pkg'
+end
+
 # Some steps expect the gem to be built, so it can be added to rails projects created in tests.
-task :cucumber => :build
+task :cucumber => [:clean, :build]

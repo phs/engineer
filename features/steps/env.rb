@@ -36,19 +36,19 @@ module Helpers
       File.open('Gemfile', 'a') do |gemfile|
         gemfile << "gem 'engineer', '>= 0.0.0'\n"
       end
-      run "GEM_HOME='#{workspace 'gemrepo'}' bundle install"
+      run "#{gem_home} bundle install"
     end
   end
 
   def generate(generator, options = {})
     workspace @current_app do
-      run "rails g #{generator}", options
+      run "#{gem_home} bundle exec rails g #{generator}", options
     end
   end
 
   def rake(rake_task, options = {})
     workspace @current_app do
-      run "rake #{rake_task}", options
+      run "#{gem_home} bundle exec rake #{rake_task}", options
     end
   end
 
@@ -73,9 +73,7 @@ private
 
   def install_engineer_gem_to_workspace_repo
     @engineer_gem_installed_to_workspace_repo ||= begin
-      repo_path = workspace 'gemrepo'
-      mkdir_p repo_path
-      run "GEM_HOME='#{repo_path}' gem install --no-rdoc --no-ri #{ENGINEER_GEM_FILE}"
+      run "#{gem_home} gem install --no-rdoc --no-ri #{ENGINEER_GEM_FILE}"
       true
     end
   end
@@ -102,6 +100,14 @@ private
     end
   end
   
+  def gem_home
+    @gem_home ||= begin
+      repo_path = workspace 'gemrepo'
+      mkdir_p repo_path
+      "GEM_HOME='#{repo_path}'"
+    end
+  end
+
   def log(message)
     puts message if ENV['VERBOSE'] == 'true'
   end
