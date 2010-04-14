@@ -11,8 +11,6 @@ Feature: Engineer Installation
     When I rails g engineer:install
     Then I should see output:
       """
-             exist  lib
-            create  lib/tasks/engineer.rake
             append  Rakefile
       """
 

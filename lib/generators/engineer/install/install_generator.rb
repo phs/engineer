@@ -6,10 +6,6 @@ class Engineer
         @source_root ||= File.expand_path(File.join(File.dirname(__FILE__), 'templates'))
       end
       
-      def copy_lib_files
-        directory 'lib'
-      end
-      
       def append_gemspec_to_Rakefile
         in_root do
           unless IO.read('Rakefile') =~ /Engineer::Tasks.new/

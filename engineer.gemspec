@@ -24,8 +24,7 @@ Gem::Specification.new do |s|
      "lib/engineer.rb",
      "lib/engineer/tasks.rb",
      "lib/generators/engineer/install/USAGE",
-     "lib/generators/engineer/install/install_generator.rb",
-     "lib/generators/engineer/install/templates/lib/tasks/engineer.rake"
+     "lib/generators/engineer/install/install_generator.rb"
   ]
   s.homepage = %q{http://github.com/phs/engineer}
   s.rdoc_options = ["--charset=UTF-8"]
