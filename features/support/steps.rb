@@ -34,13 +34,13 @@ Then "I should see output:" do |command_output|
 end
 
 Then "$file should contain:" do |file, content|
-  workspace do
+  in_workspace do
     File.read(file).should include content
   end
 end
 
 Then "I should see a $file file" do |file|
-  workspace do
+  in_workspace do
     File.exists?(file).should be_true
   end
 end

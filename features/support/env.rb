@@ -16,22 +16,22 @@ end
 PROJECT_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
 ENGINEER_GEM_FILE = Dir["#{PROJECT_ROOT}/pkg/engineer*gem"].first
 
+if ENV['VERBOSE'] == 'true'
+  include FileUtils::Verbose
+else
+  include FileUtils
+end
+
 module Helpers
-  if ENV['VERBOSE'] == 'true'
-    include FileUtils::Verbose
-  else
-    include FileUtils
-  end
-  
   def generate_rails_app(name = 'rails_app')
     @current_app = name
-    workspace do
+    in_workspace do
       run "rails #{name}"
     end
   end
   
   def add_gem(gem_file)
-    workspace @current_app do
+    in_current_app do
       gem_name, version = File.basename(gem_file).match(/(.*)-(\d+\.\d+\.\d+)\.gem/)[1..2]
       install_gem gem_file
       File.open('Gemfile', 'a') do |gemfile|
@@ -42,19 +42,19 @@ module Helpers
   end
 
   def generate(generator, options = {})
-    workspace @current_app do
+    in_current_app do
       run "#{gem_home} bundle exec rails g #{generator}", options
     end
   end
 
   def rake(rake_task, options = {})
-    workspace @current_app do
+    in_current_app do
       run "#{gem_home} bundle exec rake #{rake_task}", options
     end
   end
 
   def fill_out_the_rakefile_gemspec
-    workspace @current_app do
+    in_current_app do
       rakefile = File.read('Rakefile')
       rakefile.gsub! 'gem.summary = %Q{TODO: one-line summary of your gem}',       'gem.summary = %Q{My awesome engine}'
       rakefile.gsub! 'gem.description = %Q{TODO: longer description of your gem}', 'gem.description = %Q{My awesome, beautiful engine}'
@@ -88,8 +88,8 @@ private
     end
   end
   
-  def workspace(path = nil)
-    absolute_path = path ? File.join(@workspace, path) : @workspace
+  def in_dir(*path)
+    absolute_path = File.join(SUITE_WIDE_WORKSPACE, *path)
     
     if block_given?
       Dir.chdir(absolute_path) do
@@ -100,10 +100,18 @@ private
       absolute_path
     end
   end
+
+  def in_workspace(*path, &block)
+    in_dir "current_scenario", *path, &block
+  end
   
+  def in_current_app(*path, &block)
+    in_workspace @current_app, *path, &block
+  end
+
   def gem_home
     @gem_home ||= begin
-      repo_path = workspace 'gemrepo'
+      repo_path = in_workspace 'gemrepo'
       mkdir_p repo_path
       "GEM_HOME='#{repo_path}'"
     end
@@ -115,15 +123,17 @@ private
 
 end
 
+SUITE_WIDE_WORKSPACE = File.join(Dir::tmpdir, "engineer-cucumber-#{$$}").tap do |tmpdir|
+  mkdir_p tmpdir
+  at_exit { rm_rf tmpdir }
+end
+
 Before do
-  @workspace ||= File.join(Dir::tmpdir, "engineer-cucumber-#{$$}").tap do |tmpdir|
-    mkdir_p tmpdir
-    at_exit { rm_rf tmpdir }
-  end
+  mkdir_p in_workspace
 end
 
 After do
-  rm_rf @workspace
+  rm_rf in_workspace
 end
 
 World(Helpers)
