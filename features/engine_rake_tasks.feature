@@ -1,4 +1,4 @@
-Feature: Rake Tasks
+Feature: Rake Tasks added to Engines
   As an engine author
   I want to pack my app as a gem the same way I do with jeweler
   Since I probably already know how to use jeweler
