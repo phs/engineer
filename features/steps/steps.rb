@@ -4,10 +4,6 @@ Given "I have a new rails app named $name" do |name|
   generate_rails_app name
 end
 
-Given "I have a new rails app" do
-  generate_rails_app
-end
-
 When "I add the engineer gem" do
   add_engineer_gem
 end
@@ -46,4 +42,17 @@ Then "I should see a $file file" do |file|
   workspace do
     File.exists?(file).should be_true
   end
+end
+
+Given "I have a finished engine application named $engine" do |engine|
+  Given "I have a new rails app named #{engine}"
+    And "I add the engineer gem"
+    And "I rails g engineer:install"
+    And "I rake version:write"
+    And "I fill out my Rakefile gemspec"
+    And "I rake build"
+end
+
+Given 'I even get here' do
+  puts "I got here!"
 end
