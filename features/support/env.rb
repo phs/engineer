@@ -89,7 +89,7 @@ private
   end
   
   def in_workspace(*path)
-    absolute_path = File.join(SUITE_WIDE_WORKSPACE, *path)
+    absolute_path = File.join(WORKSPACE, *path)
     
     if block_given?
       Dir.chdir(absolute_path) do
@@ -123,7 +123,7 @@ private
 
 end
 
-SUITE_WIDE_WORKSPACE = File.join(Dir::tmpdir, "engineer-cucumber-#{$$}").tap do |tmpdir|
+WORKSPACE = File.join(Dir::tmpdir, "engineer-cucumber-#{$$}").tap do |tmpdir|
   mkdir_p tmpdir
   at_exit { rm_rf tmpdir }
 end
