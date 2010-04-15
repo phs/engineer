@@ -35,7 +35,7 @@ end
 
 task :spec => :check_dependencies
 
-task :default => :spec
+task :default => [:spec, :cucumber]
 
 require 'rake/rdoctask'
 Rake::RDocTask.new do |rdoc|
