@@ -11,11 +11,13 @@ Feature: Engineer Installation
     Then I should see output:
       """
             append  Rakefile
-              gsub  config/routes.rb
-            create  lib/generators/my_engine/install
+             exist  lib
+            create  lib/my_engine/engine.rb
+            create  lib/my_engine.rb
             create  lib/generators/my_engine/install/install_generator.rb
             create  lib/generators/my_engine/install/templates/my_engine.rake
             create  lib/generators/my_engine/install/USAGE
+              gsub  config/routes.rb
       """
 
     And config/routes.rb should contain:

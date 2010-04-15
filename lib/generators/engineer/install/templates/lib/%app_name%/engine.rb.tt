@@ -1,0 +1,7 @@
+require "<%= app_name %>"
+require "rails"
+
+module <%= app_name.camelize %>
+  class Engine < Rails::Engine
+  end
+end
