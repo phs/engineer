@@ -40,7 +40,7 @@ RAKE
       end
 
       def create_install_generator
-        directory '.', File.join("lib", "generators", app_name, "install")
+        directory 'install_generator', File.join("lib", "generators", app_name, "install")
       end
 
     protected

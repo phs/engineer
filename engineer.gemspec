@@ -30,9 +30,9 @@ Gem::Specification.new do |s|
      "lib/engineer/tasks.rb",
      "lib/generators/engineer/install/USAGE",
      "lib/generators/engineer/install/install_generator.rb",
-     "lib/generators/engineer/install/templates/USAGE.tt",
-     "lib/generators/engineer/install/templates/install_generator.rb.tt",
-     "lib/generators/engineer/install/templates/templates/%app_name%.rake.tt",
+     "lib/generators/engineer/install/templates/install_generator/USAGE.tt",
+     "lib/generators/engineer/install/templates/install_generator/install_generator.rb.tt",
+     "lib/generators/engineer/install/templates/install_generator/templates/%app_name%.rake.tt",
      "spec/spec.opts",
      "spec/spec_helper.rb"
   ]
