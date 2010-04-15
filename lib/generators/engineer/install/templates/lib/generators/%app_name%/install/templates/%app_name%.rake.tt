@@ -1,15 +1,24 @@
 namespace "<%= app_name %>" do
 
-  desc "Update <%= app_name %>'s migrations and static assets"
-  task :update => ["update:migrations", "update:assets"]
+  desc "Update <%= app_name %>'s static assets and migrations"
+  task :update => ["assets:copy", "db:migrate:copy"]
 
-  namespace :update do
-    desc "Copy pending <%= app_name %> migrations to db/migrations"
-    task :migrations do
+  namespace :db do
+
+    desc "Load <%= app_name %>'s seed data"
+    task :seed do
     end
 
-    desc "Copy <%= app_name %>'s static assets to public/"
-    task :assets do
+    desc "Copy new <%= app_name %> migrations to db/migrate"
+    task "migrate:copy" do
     end
+
   end
+
+  desc "Copy <%= app_name %>'s static assets to public"
+  task "assets:copy" do
+  end
+
 end
+
+task "db:seed" => "<%= app_name %>:db:seed"
