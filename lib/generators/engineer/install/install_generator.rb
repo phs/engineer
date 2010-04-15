@@ -5,11 +5,14 @@ class Engineer
       def self.source_root
         @source_root ||= File.expand_path('../templates', __FILE__)
       end
-      
+
+      def create_engine_files
+        directory 'lib', 'lib'
+      end
+
       def append_gemspec_to_Rakefile
         in_root do
           unless IO.read('Rakefile') =~ /Engineer::Tasks.new/
-            puts app_name
             append_file 'Rakefile' do
 <<-RAKE
 
@@ -32,10 +35,6 @@ RAKE
             end
           end
         end
-      end
-
-      def create_engine_files
-        directory 'lib', 'lib'
       end
 
       # TODO: Unneeded once https://rails.lighthouseapp.com/projects/8994-ruby-on-rails/tickets/4400 is applied

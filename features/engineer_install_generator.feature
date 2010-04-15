@@ -10,13 +10,13 @@ Feature: Engineer Installation
     When I rails g engineer:install
     Then I should see output:
       """
-            append  Rakefile
              exist  lib
             create  lib/my_engine/engine.rb
             create  lib/my_engine.rb
             create  lib/generators/my_engine/install/install_generator.rb
             create  lib/generators/my_engine/install/templates/my_engine.rake
             create  lib/generators/my_engine/install/USAGE
+            append  Rakefile
               gsub  config/routes.rb
       """
 
