@@ -20,4 +20,11 @@ Feature: Engine Installation into a Host App
              exist  lib/tasks
             create  lib/tasks/my_engine.rake
       """
-    
+
+    When I rake -T
+    Then I should see output:
+      """
+      rake my_engine:update                     # Update my_engine's migrations and static assets
+      rake my_engine:update:assets              # Copy my_engine's static assets to public/
+      rake my_engine:update:migrations          # Copy pending my_engine migrations to db/migrations
+      """
