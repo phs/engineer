@@ -40,7 +40,7 @@ RAKE
 
       # TODO: Unneeded once https://rails.lighthouseapp.com/projects/8994-ruby-on-rails/tickets/4400 is applied
       def tweak_route_declaration
-        gsub_file File.join("config", "routes.rb"), /^.*::Application.routes.draw/, "Rails.application.routes.draw"
+        gsub_file File.join("config", "routes.rb"), /#{Rails.application.class}.routes.draw/, "Rails.application.routes.draw"
       end
 
     protected
