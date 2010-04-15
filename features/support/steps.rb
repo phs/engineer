@@ -38,15 +38,11 @@ Then "I should see output:" do |command_output|
 end
 
 Then "$file should contain:" do |file, content|
-  in_current_scenario do
-    File.read(file).should include content
-  end
+  File.read(in_current_app file).should include content
 end
 
 Then "I should see a $file file" do |file|
-  in_current_scenario do
-    File.exists?(file).should be_true
-  end
+  File.exists?(in_current_app file).should be_true
 end
 
 Given "I have a finished engine application named $engine" do |engine|

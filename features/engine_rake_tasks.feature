@@ -15,7 +15,7 @@ Feature: Rake Tasks added to Engines
       """
     
     When I rake version:write
-    Then my_engine/VERSION should contain:
+    Then VERSION should contain:
       """
       0.0.0
       """
@@ -40,5 +40,5 @@ Feature: Rake Tasks added to Engines
     Given I rake version:write
     And I fill out my Rakefile gemspec
     When I rake build
-    Then I should see a my_engine/my_engine.gemspec file
-    And I should see a my_engine/pkg/my_engine-0.0.0.gem file
+    Then I should see a my_engine.gemspec file
+    And I should see a pkg/my_engine-0.0.0.gem file

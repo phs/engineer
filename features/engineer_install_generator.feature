@@ -11,10 +11,16 @@ Feature: Engineer Installation
     Then I should see output:
       """
             append  Rakefile
+              gsub  config/routes.rb
             create  lib/generators/my_engine/install
             create  lib/generators/my_engine/install/install_generator.rb
             create  lib/generators/my_engine/install/templates/my_engine.rake
             create  lib/generators/my_engine/install/USAGE
+      """
+
+    And config/routes.rb should contain:
+      """
+      Rails.application.routes.draw
       """
 
     When I rake -T

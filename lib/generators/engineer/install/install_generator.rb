@@ -34,6 +34,11 @@ RAKE
         end
       end
 
+      # TODO: Unneeded once https://rails.lighthouseapp.com/projects/8994-ruby-on-rails/tickets/4400 is applied
+      def tweak_route_declaration
+        gsub_file File.join("config", "routes.rb"), /^.*::Application.routes.draw/, "Rails.application.routes.draw"
+      end
+
       def create_install_generator
         directory '.', File.join("lib", "generators", app_name, "install")
       end
