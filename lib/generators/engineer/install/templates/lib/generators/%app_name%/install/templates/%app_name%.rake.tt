@@ -3,10 +3,13 @@ namespace "<%= app_name %>" do
   desc "Update <%= app_name %>'s static assets and migrations"
   task :update => ["assets:copy", "db:migrate:copy"]
 
+  # TODO: not everyone uses databases.
   namespace :db do
 
     desc "Load <%= app_name %>'s seed data"
-    task :seed do
+    task :seed => "rake:environment" do
+      seed_file = File.join(<%= app_module %>::Engine.root, 'db', 'seeds.rb')
+      load(seed_file) if File.exist?(seed_file)
     end
 
     desc "Copy new <%= app_name %> migrations to db/migrate"
