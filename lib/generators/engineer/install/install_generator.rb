@@ -46,7 +46,11 @@ RAKE
     protected
 
       def app_name
-        Rails.application.class.name.split('::').first.underscore
+        app_module.underscore
+      end
+
+      def app_module
+        Rails.application.class.name.split('::').first
       end
 
     end

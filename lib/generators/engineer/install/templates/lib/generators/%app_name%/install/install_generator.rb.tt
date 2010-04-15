@@ -1,4 +1,4 @@
-module <%= app_name.camelize %>
+module <%= app_module %>
   module Generators
     class InstallGenerator < Rails::Generators::Base
 
