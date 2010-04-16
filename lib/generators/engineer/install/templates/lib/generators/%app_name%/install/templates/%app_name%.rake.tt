@@ -1,7 +1,7 @@
 namespace "<%= app_name %>" do
 
   desc "Update <%= app_name %>'s static assets and migrations"
-  task :update => ["assets:copy", "db:migrate:copy"]
+  task :update => ["assets", "db:migrate"]
 
   namespace :db do<%# TODO: not everyone uses active record. %>
 
