@@ -24,8 +24,8 @@ Feature: Engine Installation into a Host App
     When I rake -T
     Then I should see output:
       """
-      rake my_engine:assets:copy                # Copy my_engine's static assets to public
-      rake my_engine:db:migrate:copy            # Copy new my_engine migrations to db/migrate
+      rake my_engine:assets                     # Copy my_engine's static assets to public
+      rake my_engine:db:migrate                 # Copy new my_engine migrations for use
       rake my_engine:db:seed                    # Load my_engine's seed data
       rake my_engine:update                     # Update my_engine's static assets and migrations
       """

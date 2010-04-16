@@ -12,7 +12,7 @@ namespace "<%= app_name %>" do
     end
 
     desc "Copy new <%= app_name %> migrations for use"<%# TODO: this stinks, I want thor.  Be a generator? %>
-    task "migrate:copy" do
+    task :migrate do
       require 'rails/generators/active_record'
       mkdir_p 'db/migrate' unless File.exists? 'db/migrate'
 
@@ -39,7 +39,7 @@ namespace "<%= app_name %>" do
   end
 
   desc "Copy <%= app_name %>'s static assets to public"
-  task "assets:copy" do
+  task :assets do
   end
 
 end
