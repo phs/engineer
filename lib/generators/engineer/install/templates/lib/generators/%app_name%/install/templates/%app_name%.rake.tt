@@ -3,8 +3,7 @@ namespace "<%= app_name %>" do
   desc "Update <%= app_name %>'s static assets and migrations"
   task :update => ["assets:copy", "db:migrate:copy"]
 
-  # TODO: not everyone uses databases.
-  namespace :db do
+  namespace :db do<%# TODO: not everyone uses active record. %>
 
     desc "Load <%= app_name %>'s seed data"
     task :seed => "rake:environment" do
@@ -12,8 +11,28 @@ namespace "<%= app_name %>" do
       load(seed_file) if File.exist?(seed_file)
     end
 
-    desc "Copy new <%= app_name %> migrations to db/migrate"
+    desc "Copy new <%= app_name %> migrations for use"<%# TODO: this stinks, I want thor.  Be a generator? %>
     task "migrate:copy" do
+      require 'rails/generators/active_record'
+      mkdir_p 'db/migrate' unless File.exists? 'db/migrate'
+
+      Dir["#{<%= app_module %>::Engine.root}/db/migrate/[0-9]*_*.rb"].sort.each do |original_migration|
+        original_migration_name = File.basename(original_migration).match(/\d+_(.*)\.rb/)[1]
+        copied_migration_name = "<%= app_name %>_#{original_migration_name}"
+
+        next unless Dir["db/migrate/[0-9]*_#{copied_migration_name}.rb"].empty?
+
+        migration_number = ActiveRecord::Generators::Base.next_migration_number('db/migrate')
+        copied_migration = "db/migrate/#{migration_number}_#{copied_migration_name}.rb"
+
+        puts copied_migration
+
+        migration_source = File.read(original_migration)
+        migration_source.gsub! "class #{original_migration_name.camelize}", "class #{copied_migration_name.camelize}"
+        File.open(copied_migration, "w") { |f| f << migration_source }
+
+        sleep 1 # wait for timestamp to change.
+      end
     end
 
   end
