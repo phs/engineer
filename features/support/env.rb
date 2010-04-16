@@ -62,11 +62,11 @@ module Helpers
   def fill_out_the_rakefile_gemspec
     in_current_app do
       rakefile = File.read('Rakefile')
-      rakefile.gsub! 'gem.summary = %Q{TODO: one-line summary of your gem}',       'gem.summary = %Q{My awesome engine}'
-      rakefile.gsub! 'gem.description = %Q{TODO: longer description of your gem}', 'gem.description = %Q{My awesome, beautiful engine}'
-      rakefile.gsub! 'gem.email = "TODO"',                                         'gem.email = "awesome-beautiful-me@example.com"'
-      rakefile.gsub! 'gem.homepage = "TODO"',                                      'gem.homepage = "http://example.com/"'
-      rakefile.gsub! 'gem.authors = ["TODO"]',                                     'gem.authors = ["Awesome, Beautiful Me"]'
+      rakefile.gsub! 'gem.summary = %Q{TODO: one-line summary of your engine}',       'gem.summary = %Q{My awesome engine}'
+      rakefile.gsub! 'gem.description = %Q{TODO: longer description of your engine}', 'gem.description = %Q{My awesome, beautiful engine}'
+      rakefile.gsub! 'gem.email = "TODO"',                                            'gem.email = "awesome-beautiful-me@example.com"'
+      rakefile.gsub! 'gem.homepage = "TODO"',                                         'gem.homepage = "http://example.com/"'
+      rakefile.gsub! 'gem.authors = ["TODO"]',                                        'gem.authors = ["Awesome, Beautiful Me"]'
       File.open('Rakefile', 'w') { |f| f << rakefile }
     end
   end

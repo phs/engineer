@@ -18,8 +18,8 @@ class Engineer
 
 Engineer::Tasks.new do |gem|
   gem.name = "#{app_name}"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{TODO: one-line summary of your engine}
+  gem.description = %Q{TODO: longer description of your engine}
   gem.email = "TODO"
   gem.homepage = "TODO"
   gem.authors = ["TODO"]
@@ -29,6 +29,16 @@ Engineer::Tasks.new do |gem|
     "{app,config,lib,public,spec,test,vendor}/**/*",
     "db/**/*.rb"
   ]
+
+  # Include Bundler dependencies
+  Bundler.definition.dependencies.each do |dependency|
+    if (dependency.groups & [:default, :production, :staging]).any?
+      gem.add_dependency dependency.name, *dependency.requirement.as_list
+    else
+      gem.add_development_dependency dependency.name, *dependency.requirement.as_list
+    end
+  end
+
   # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
 end
 RAKE

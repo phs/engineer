@@ -38,7 +38,8 @@ Then "I should see output:" do |command_output|
 end
 
 Then "$file should contain:" do |file, content|
-  File.read(in_current_app file).should include content
+  content = Regexp.quote(content).gsub /\\\$\\\{[A-Z_]+\\\}/, '.*' # escaped ${WHAT_EVER} becomes .*
+  File.read(in_current_app file).should match content
 end
 
 Then "I should see a $file file" do |file|
@@ -51,8 +52,4 @@ Given "I have a finished engine application named $engine" do |engine|
     And "I rake version:write"
     And "I fill out my Rakefile gemspec"
     And "I rake build"
-end
-
-Given 'I even get here' do
-  puts "I got here!"
 end

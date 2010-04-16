@@ -42,3 +42,10 @@ Feature: Rake Tasks added to Engines
     When I rake build
     Then I should see a my_engine.gemspec file
     And I should see a pkg/my_engine-0.0.0.gem file
+
+    And my_engine.gemspec should contain:
+      """
+            s.add_runtime_dependency(%q<rails>, ["${VERSION}"])
+            s.add_runtime_dependency(%q<sqlite3-ruby>, ["${VERSION}"])
+            s.add_runtime_dependency(%q<engineer>, ["${VERSION}"])
+      """
