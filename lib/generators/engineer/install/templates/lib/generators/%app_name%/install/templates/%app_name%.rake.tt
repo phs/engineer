@@ -31,6 +31,7 @@ namespace "<%= app_name %>" do
         migration_source.gsub! "class #{original_migration_name.camelize}", "class #{copied_migration_name.camelize}"
         File.open(copied_migration, "w") { |f| f << migration_source }
 
+        # TODO: This is unnecessary once https://rails.lighthouseapp.com/projects/8994-ruby-on-rails/tickets/4412 gets in
         sleep 1 # wait for timestamp to change.
       end
     end
