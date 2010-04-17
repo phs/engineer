@@ -1,12 +1,12 @@
 namespace "<%= app_name %>" do
 
   desc "Update <%= app_name %>'s static assets and migrations"
-  task :update => ["assets", "db:migrate"]
+  task :update => [:assets, "db:migrate"]
 
   namespace :db do<%# TODO: not everyone uses active record. %>
 
     desc "Load <%= app_name %>'s seed data"
-    task :seed => "rake:environment" do
+    task :seed => :environment do
       seed_file = File.join(<%= app_module %>::Engine.root, 'db', 'seeds.rb')
       load(seed_file) if File.exist?(seed_file)
     end
@@ -38,8 +38,11 @@ namespace "<%= app_name %>" do
 
   end
 
-  desc "Copy <%= app_name %>'s static assets to public"
-  task :assets do
+  desc "Sync <%= app_name %>'s static assets (pass false to just copy)"
+  task :assets, [:sync] => :environment do |t, args|
+    args.with_defaults :sync => true
+    rm_rf <%= app_module %>::Engine.paths.public.to_a.first if args[:sync]
+    cp_r <%= app_module %>::Engine.paths.gem_public.to_a.first, <%= app_module %>::Engine.paths.public.to_a.first
   end
 
 end

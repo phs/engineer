@@ -3,5 +3,11 @@ require "rails"
 
 module <%= app_module %>
   class Engine < Rails::Engine
+
+    initializer "paths.public" do
+      paths.gem_public = paths.public.to_a.first
+      paths.public = File.join(Rails.application.paths.public.to_a.first, "<%= app_name %>")
+    end
+
   end
 end
