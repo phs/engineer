@@ -5,7 +5,7 @@ module <%= app_module %>
   class Engine < Rails::Engine
     ASSET_PATH = "<%= app_name %>"
 
-    initializer "my_engine.asset_path" do
+    initializer "<%= app_name %>.asset_path" do
       <%= app_module %>::ApplicationController.config.asset_path = "/#{ASSET_PATH}%s"
     end
 
