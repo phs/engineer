@@ -71,6 +71,10 @@ module Helpers
     end
   end
 
+  def strip_wildcards(content)
+    Regexp.quote(content).gsub /\\\$\\\{[A-Z_]+\\\}/, '.*' # escaped ${WHAT_EVER} becomes .*
+  end
+
   def latest_output
     @latest_output
   end

@@ -53,6 +53,8 @@ Engineer::Tasks.new do |gem|
 
   # Include Bundler dependencies
   Bundler.definition.dependencies.each do |dependency|
+    next if dependency.name == "engineer"
+
     if (dependency.groups & [:default, :production, :staging]).any?
       gem.add_dependency dependency.name, *dependency.requirement.as_list
     else

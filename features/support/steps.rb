@@ -38,8 +38,11 @@ Then "I should see output:" do |command_output|
 end
 
 Then "$file should contain:" do |file, content|
-  content = Regexp.quote(content).gsub /\\\$\\\{[A-Z_]+\\\}/, '.*' # escaped ${WHAT_EVER} becomes .*
-  File.read(in_current_app file).should match content
+  File.read(in_current_app file).should match strip_wildcards(content)
+end
+
+Then "$file should not contain:" do |file, content|
+  File.read(in_current_app file).should_not match strip_wildcards(content)
 end
 
 Then "I should see a $file file" do |file|

@@ -28,6 +28,11 @@ Feature: Engineer Installation
       Rails.application.routes.draw
       """
 
+    And app/controllers/my_engine/application_controller.rb should contain:
+      """
+      class MyEngine::ApplicationController
+      """
+
     When I rake -T
     Then I should see output:
       """

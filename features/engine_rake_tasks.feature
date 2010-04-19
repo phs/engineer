@@ -47,5 +47,9 @@ Feature: Rake Tasks added to Engines
       """
             s.add_runtime_dependency(%q<rails>, ["${VERSION}"])
             s.add_runtime_dependency(%q<sqlite3-ruby>, ["${VERSION}"])
+      """
+
+    And my_engine.gemspec should not contain:
+      """
             s.add_runtime_dependency(%q<engineer>, ["${VERSION}"])
       """
