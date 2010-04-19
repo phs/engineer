@@ -2,12 +2,12 @@ require "<%= app_name %>"
 require "rails"
 
 module <%= app_module %>
-  ASSET_PATH = "/<%= app_name %>%s"
+  ASSET_PATH = "<%= app_name %>"
 
   class Engine < Rails::Engine
 
     initializer "my_engine.asset_path" do
-      <%= app_module %>::ApplicationController.config.asset_path = ASSET_PATH
+      <%= app_module %>::ApplicationController.config.asset_path = "/#{ASSET_PATH}%s"
     end
 
   end
