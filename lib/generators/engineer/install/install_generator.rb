@@ -10,6 +10,27 @@ class Engineer
         directory 'lib', 'lib'
       end
 
+      def namespace_application_controller
+        unnested_path = Rails.application.paths.app.controllers.to_a.detect { |p| File.exists?(File.join(p, 'application_controller.rb')) }
+        return unless unnested_path
+
+        nested_path = File.join(unnested_path, app_name)
+        empty_directory nested_path
+
+        create_file File.join(nested_path, 'application_controller.rb') do
+          content = File.read File.join(unnested_path, 'application_controller.rb')
+          content.gsub! "class ApplicationController", "class #{app_module}::ApplicationController"
+          content
+        end
+
+        remove_file File.join(unnested_path, 'application_controller.rb')
+
+        controller_files = Rails.application.paths.app.controllers.to_a.collect { |p| Dir[File.join(p, "**", "*_controller.rb")] }.flatten
+        controller_files.reject { |f| f =~ /application_controller\.rb$/ }.each do |controller_file|
+          gsub_file controller_file, "< ApplicationController", "< #{app_module}::ApplicationController"
+        end
+      end
+
       def append_gemspec_to_Rakefile
         in_root do
           unless IO.read('Rakefile') =~ /Engineer::Tasks.new/

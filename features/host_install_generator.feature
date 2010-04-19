@@ -24,7 +24,7 @@ Feature: Engine Installation into a Host App
     When I rake -T
     Then I should see output:
       """
-      rake my_engine:assets                     # Copy my_engine's static assets to public
+      rake my_engine:assets[sync]               # Sync my_engine's static assets (pass false to just copy)
       rake my_engine:db:migrate                 # Copy new my_engine migrations for use
       rake my_engine:db:seed                    # Load my_engine's seed data
       rake my_engine:update                     # Update my_engine's static assets and migrations

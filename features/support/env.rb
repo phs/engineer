@@ -129,7 +129,8 @@ private
 
 end
 
-WORKSPACE = File.join(Dir::tmpdir, "engineer-cucumber-#{$$}").tap do |tmpdir|
+# TODO: join from Dir::tmpdir once https://rails.lighthouseapp.com/projects/8994/tickets/4442 is in.
+WORKSPACE = File.join("/tmp", "engineer-cucumber-#{$$}").tap do |tmpdir|
   mkdir_p tmpdir
   mkdir_p File.join(tmpdir, 'apps')
   at_exit { rm_rf tmpdir }

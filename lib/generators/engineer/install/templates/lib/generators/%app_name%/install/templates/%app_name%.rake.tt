@@ -41,8 +41,9 @@ namespace "<%= app_name %>" do
   desc "Sync <%= app_name %>'s static assets (pass false to just copy)"
   task :assets, [:sync] => :environment do |t, args|
     args.with_defaults :sync => true
-    rm_rf <%= app_module %>::Engine.paths.public.to_a.first if args[:sync]
-    cp_r <%= app_module %>::Engine.paths.gem_public.to_a.first, <%= app_module %>::Engine.paths.public.to_a.first
+    engine_asset_path = File.join(Rails.application.paths.public.to_a.first, "<%= app_name %>") # TODO: engine config?
+    rm_rf engine_asset_path if args[:sync]
+    cp_r engine_asset_path, Rails.application.paths.public.to_a.first
   end
 
 end

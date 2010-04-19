@@ -3,11 +3,5 @@ require "rails"
 
 module <%= app_module %>
   class Engine < Rails::Engine
-
-    initializer "<%= app_name %>.paths", :before => "action_controller.set_configs" do
-      paths.gem_public = paths.public.to_a.first
-      paths.public = File.join(Rails.application.paths.public.to_a.first, "<%= app_name %>")
-    end
-
   end
 end

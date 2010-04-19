@@ -16,6 +16,9 @@ Feature: Engineer Installation
             create  lib/generators/my_engine/install/install_generator.rb
             create  lib/generators/my_engine/install/templates/my_engine.rake
             create  lib/generators/my_engine/install/USAGE
+            create  app/controllers/my_engine
+            create  app/controllers/my_engine/application_controller.rb
+            remove  app/controllers/application_controller.rb
             append  Rakefile
               gsub  config/routes.rb
       """

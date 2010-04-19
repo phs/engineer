@@ -1,1 +1,3 @@
-require "<%= app_name %>/engine"
+module <%= app_module %>
+  require "<%= app_name %>/engine" if defined?(Rails)
+end
