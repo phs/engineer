@@ -42,7 +42,7 @@ namespace "<%= app_name %><%#%>" do
 
   desc "Link (or copy) <%= app_name %><%#%>'s static assets"
   task :assets => :environment do
-    engine_asset_path = File.join(Rails.application.paths.public.to_a.first, <%= app_module %><%#%>::Engine::ASSET_PATH)
+    engine_asset_path = File.join(Rails.application.paths.public.to_a.first, <%= app_module %><%#%>::Engine::ASSET_PREFIX)
     rm_rf engine_asset_path
     begin
       ln_s <%= app_module %><%#%>::Engine.paths.public.to_a.first, engine_asset_path

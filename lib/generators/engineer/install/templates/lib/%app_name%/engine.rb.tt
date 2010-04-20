@@ -1,13 +1,35 @@
-require "<%= app_name %>"
+require "<%= app_name %><%#%>"
 require "rails"
 
-module <%= app_module %>
+module <%= app_module %><%#%>
   class Engine < Rails::Engine
-    ASSET_PATH = "<%= app_name %>"
+    ASSET_PREFIX = "<%= app_name %><%#%>"
 
-    initializer "<%= app_name %>.asset_path" do
-      <%= app_module %>::ApplicationController.config.asset_path = "/#{ASSET_PATH}%s"
+    initializer "<%= app_name %><%#%>.action_view.identifier_collection" do
+      require 'action_view/template'
+      class ActionView::Template
+        def render_with_identifier_collection(view, locals, &block)
+          (Thread.current[:view_identifiers] ||= []).push identifier
+          render_without_identifier_collection(view, locals, &block)
+        ensure
+          Thread.current[:view_identifiers].pop
+        end
+
+        alias_method_chain :render, :identifier_collection unless instance_methods.include? "render_without_identifier_collection"
+      end
     end
 
+    def engine_view?(identifier)
+      @engine_views ||= Hash.new do |h, identifier|
+        h[identifier] = !Rails.application.paths.app.views.any? { |path| identifier =~ /^#{Regexp.escape(path)}/ }
+      end
+      @engine_views[identifier]
+    end
+
+    initializer "<%= app_name %><%#%>.asset_path" do
+      <%= app_module %><%#%>::ApplicationController.config.asset_path = lambda do |source|
+        engine_view?((Thread.current[:view_identifiers] ||= []).last) ? "/#{ASSET_PREFIX}#{source}" : source
+      end
+    end
   end
 end
