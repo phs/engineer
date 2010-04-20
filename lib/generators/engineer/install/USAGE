@@ -1,2 +1,10 @@
 Description:
-    Add the engineer rake tasks and install generator.
+  Transform the application into a gem-based engine.
+
+  The major steps are:
+    * creating an Engine subclass under lib/
+    * moving ApplicationController into a submodule
+    * creating an installation generator for host apps
+    * adding jeweler-style gem tasks to the Rakefile
+
+  Please see http://github.com/phs/engineer for details
