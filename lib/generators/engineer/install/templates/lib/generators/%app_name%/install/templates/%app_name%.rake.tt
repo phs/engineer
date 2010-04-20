@@ -1,29 +1,31 @@
-namespace "<%= app_name %>" do
+namespace "<%= app_name %><%#%>" do
 
-  desc "Update <%= app_name %>'s static assets and migrations"
+  desc "Update all of <%= app_name %><%#%>'s related resources"
   task :update => [:assets, "db:migrate"]
 
   namespace :db do<%# TODO: not everyone uses active record. %>
 
-    desc "Load <%= app_name %>'s seed data"
+    desc "Load <%= app_name %><%#%>'s seed data"
     task :seed => :environment do
-      seed_file = File.join(<%= app_module %>::Engine.root, 'db', 'seeds.rb')
+      seed_file = File.join(<%= app_module %><%#%>::Engine.root, 'db', 'seeds.rb')
       load(seed_file) if File.exist?(seed_file)
     end
 
-    desc "Copy new <%= app_name %> migrations for use"<%# TODO: this stinks, I want thor.  Be a generator? %>
+    desc "Import <%= app_name %><%#%>'s migrations"
     task :migrate do
       require 'rails/generators/active_record'
-      mkdir_p 'db/migrate' unless File.exists? 'db/migrate'
+      db_migrate = File.join(%w{db migrate})
 
-      Dir["#{<%= app_module %>::Engine.root}/db/migrate/[0-9]*_*.rb"].sort.each do |original_migration|
+      Dir[File.join(<%= app_module %><%#%>::Engine.root, *%w{db migrate [0-9]*_*.rb})].sort.each do |original_migration|
+        mkdir_p db_migrate unless File.exists? db_migrate
+
         original_migration_name = File.basename(original_migration).match(/\d+_(.*)\.rb/)[1]
-        copied_migration_name = "<%= app_name %>_#{original_migration_name}"
+        copied_migration_name = "<%= app_name %><%#%>_#{original_migration_name}"
 
-        next unless Dir["db/migrate/[0-9]*_#{copied_migration_name}.rb"].empty?
+        next unless Dir[File.join(db_migrate, "[0-9]*_#{copied_migration_name}.rb")].empty?
 
-        migration_number = ActiveRecord::Generators::Base.next_migration_number('db/migrate')
-        copied_migration = "db/migrate/#{migration_number}_#{copied_migration_name}.rb"
+        migration_number = ActiveRecord::Generators::Base.next_migration_number(db_migrate)
+        copied_migration = File.join(db_migrate, "#{migration_number}_#{copied_migration_name}.rb")
 
         puts copied_migration
 
@@ -38,14 +40,33 @@ namespace "<%= app_name %>" do
 
   end
 
-  desc "Sync <%= app_name %>'s static assets (pass false to just copy)"
-  task :assets, [:sync] => :environment do |t, args|
-    args.with_defaults :sync => true
-    engine_asset_path = File.join(Rails.application.paths.public.to_a.first, <%= app_module %>::Engine::ASSET_PATH)
-    rm_rf engine_asset_path if args[:sync]
-    cp_r <%= app_module %>::Engine.paths.public.to_a.first, engine_asset_path
+  desc "Link (or copy) <%= app_name %><%#%>'s static assets"
+  task :assets => :environment do
+    engine_asset_path = File.join(Rails.application.paths.public.to_a.first, <%= app_module %><%#%>::Engine::ASSET_PATH)
+    rm_rf engine_asset_path
+    begin
+      ln_s <%= app_module %><%#%>::Engine.paths.public.to_a.first, engine_asset_path
+    rescue NotImplemented
+      cp_r <%= app_module %><%#%>::Engine.paths.public.to_a.first, engine_asset_path
+    end
   end
 
 end
 
-task "db:seed" => "<%= app_name %>:db:seed"
+namespace :engines do
+
+  desc "Load seed data from all engines"
+  task "db:seed" => "<%= app_name %><%#%>:db:seed"
+
+  desc "Import migrations from all engines"
+  task "db:migrate" => "<%= app_name %><%#%>:db:migrate"
+
+  desc "Link (or copy) static assets from all engines"
+  task :assets => "<%= app_name %><%#%>:assets"
+
+  desc "Update related resources from all engines"
+  task :update => "<%= app_name %><%#%>:update"
+
+end
+
+task "db:seed" => "engines:db:seed"

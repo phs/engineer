@@ -24,8 +24,16 @@ Feature: Engine Installation into a Host App
     When I rake -T
     Then I should see output:
       """
-      rake my_engine:assets[sync]               # Sync my_engine's static assets (pass false to just copy)
-      rake my_engine:db:migrate                 # Copy new my_engine migrations for use
+      rake my_engine:assets                     # Link (or copy) my_engine's static assets
+      rake my_engine:db:migrate                 # Import my_engine's migrations
       rake my_engine:db:seed                    # Load my_engine's seed data
-      rake my_engine:update                     # Update my_engine's static assets and migrations
+      rake my_engine:update                     # Update all of my_engine's related resources
+      """
+
+    And I should see output:
+      """
+      rake engines:assets                       # Link (or copy) static assets from all engines
+      rake engines:db:migrate                   # Import migrations from all engines
+      rake engines:db:seed                      # Load seed data from all engines
+      rake engines:update                       # Update related resources from all engines
       """
