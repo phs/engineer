@@ -1,5 +1,157 @@
-== Engineer
+= Engineer
 
 It makes engines, get it?
 
-This is extra-super-alpha-what-are-you-even-doing-here.  You have been warned.
+== Explanation
+
+Engines are rails apps which can be run from inside other rails apps.
+
+Engineer is a small gem that lets a sufficiently normal rails application quickly become an engine.  It provides necessary bits of engine anatomy, and also gives the engine author a way to publish changes (such as migrations) to users as the engine evolves.  This has been a sticking point in the past, and is one of the few remaining areas of engine support not yet covered by rails itself.
+
+Engineer targets rails 3 engines hosted inside rails 3 applications.  If you are looking for rails 2.3 support, try the engines plugin (http://rails-engines.org).
+
+== Getting Started
+
+Let's say you have a new rails app named +my_engine+ that you wish to package as an engine.  Drop this in your +Gemfile+ and do the bundler thing:
+
+<tt>gem "engineer"</tt>
+
+A new generator named <tt>engineer:install</tt> will be available; run it.
+ $ rails g engineer:install
+       exist  lib
+      create  lib/my_engine/engine.rb
+      create  lib/my_engine.rb
+      create  lib/generators/my_engine/install/install_generator.rb
+      create  lib/generators/my_engine/install/templates/my_engine.rake
+      create  lib/generators/my_engine/install/USAGE
+      create  app/controllers/my_engine
+      create  app/controllers/my_engine/application_controller.rb
+      remove  app/controllers/application_controller.rb
+      append  Rakefile
+        gsub  config/routes.rb
+
+The two major take-aways from this are
+1. <tt>application_controller.rb</tt> has moved under +my_engine+.
+2. Your +Rakefile+ has grown a bit.
+
+The Gory Details below explain more deeply, but for now let's just look at the new +Rakefile+ content:
+ $ cat Rakefile 
+  # ...
+
+  Engineer::Tasks.new do |gem|
+    gem.name = "my_engine"
+    gem.summary = %Q{TODO: one-line summary of your engine}
+    gem.description = %Q{TODO: longer description of your engine}
+    gem.email = "TODO"
+    gem.homepage = "TODO"
+    gem.authors = ["TODO"]
+    gem.require_path = 'lib'
+    gem.files =  FileList[
+      "[A-Z]*",
+      "{app,config,lib,public,spec,test,vendor}/**/*",
+      "db/**/*.rb"
+    ]
+
+    # Include Bundler dependencies
+    Bundler.definition.dependencies.each do |dependency|
+      next if dependency.name == "engineer"
+
+      if (dependency.groups & [:default, :production, :staging]).any?
+        gem.add_dependency dependency.name, *dependency.requirement.as_list
+      else
+        gem.add_development_dependency dependency.name, *dependency.requirement.as_list
+      end
+    end
+
+    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
+  end
+
+If you've used jeweler (http://github.com/technicalpickles/jeweler) before, this should look eerily familiar.  Engineer engines are shipped as gems, so engineer throws a (very light) wrapper around jeweler for wrangling the gem-related tasks.  Jeweler in turn keeps your gem's metadata in the +Rakefile+, so here it is.
+
+<b>Unlike jeweler, dependencies should still be declared in +Gemfile+, and not here.</b>
+
+As you can see, your bundler dependencies will be included in the generated gemspec.
+
+Let's fill out the gem metadata (anything with a TODO in it) and make a gem:
+ $ rake build
+  (in /Users/phil/Public/code/my_engine)
+  Expected VERSION or VERSION.yml to exist. See version:write to create an initial one.
+
+Whoops.  Our gem needs to know what version it is, and we haven't told it.  Start off at 0.0.0 by
+ $ rake version:write
+  (in /Users/phil/Public/code/my_engine)
+  Updated version: 0.0.0
+ $ rake build
+  (in /Users/phil/Public/code/my_engine)
+  Generated: my_engine.gemspec
+  my_engine.gemspec is valid.
+  WARNING:  no rubyforge_project specified
+    Successfully built RubyGem
+    Name: my_engine
+    Version: 0.0.0
+    File: my_engine-0.0.0.gem
+
+There we go, there's an engine gem sitting in <tt>pkg/</tt>, go nuts.  See jeweler's documentation for managing the version, pushing to gemcutter and other goodies.
+
+== Using Engine Gems
+
+How about the other side of the fence?  To install an engine into a host application, the host author follows a similar workflow.
+
+First, add a line to the +Gemfile+ and call bundler:
+
+<tt>gem "my_engine"</tt>
+
+A new generator will be available, named <tt>my_engine:install</tt>; run it.
+ $ rails g my_engine:install
+       exist  lib/tasks
+      create  lib/tasks/my_engine.rake
+
+Some new rake tasks are available:
+ $ rake -T my_engine
+  (in /Users/phil/Public/code/host)
+  rake my_engine:assets      # Link (or copy) my_engine's static assets
+  rake my_engine:db:migrate  # Import my_engine's migrations
+  rake my_engine:db:seed     # Load my_engine's seed data
+  rake my_engine:update      # Update all of my_engine's related resources
+
+Catch-all tasks are also available:
+ $ rake -T engines
+  (in /Users/phil/Public/code/host)
+  rake engines:assets      # Link (or copy) static assets from all engines
+  rake engines:db:migrate  # Import migrations from all engines
+  rake engines:db:seed     # Load seed data from all engines
+  rake engines:update      # Update related resources from all engines
+
+These let the host author manage the newly-installed (or updated!) engine.  Let's get any pending migrations:
+ $ rake my_engine:db:migrate
+  (in /Users/phil/Public/code/host)
+  mkdir -p db/migrate
+  db/migrate/20100420231621_my_engine_create_posts.rb
+
+This doesn't actually run any engine migrations, but instead copies new ones (with mild munging) to <tt>db/migrate</tt>.  The host author is free to take a peek at them before deciding to <tt>rake db:migrate</tt> for real.
+
+Now lets wire up the engine's static assets (stylesheets, images and so on):
+ $ rake my_engine:assets
+  (in /Users/phil/Public/code/host)
+  rm -rf /Users/phil/Public/code/host/public/my_engine
+  ln -s /opt/local/lib/ruby/gems/1.8/gems/my_engine-0.0.0/public /Users/phil/Public/code/host/public/my_engine
+
+Take a peek in <tt>public/</tt>, you've grown a +my_engine+ soft link to the engine's +public+ directory.  Voodoo in the engine takes care of looking there for assets (see Gory Details below.)  If your OS is allergic to symlinks, the files are copied instead.
+
+Run your pending migrations and fire up <tt>rails s</tt>, you're be good to go.
+
+== Gory Details
+
+== Running the Tests
+
+The (sparse) tests are written with cucumber (http://cukes.info) and can be run with just "rake".  You may need to install jeweler first.
+
+== Thanks
+
+This tool would not exist if the road had not already been well-paved by many others.  Specifically, James Adams' herculean effort in the rails 2.3 engines plugin has illuminated many issues and solutions (engineer's db migration strategy was his idea.)  Thanks also to the rails core team for incorporating many engine-centric ideas into the framework, vastly simplifying what this tool needs to do.  And also for just making an awesome framework.
+
+Finally, thanks to SEOmoz (http://seomoz.org) for letting me build this at my desk in the afternoons instead of on the couch in the middle of the night ^_^.
+
+== Copyright
+
+Copyright (c) 2009-2010 Philip Smith. See LICENSE for details.
