@@ -138,7 +138,7 @@ Now lets wire up the engine's static assets (stylesheets, images and so on):
 
 Take a peek in <tt>public/</tt>, you've grown a +my_engine+ soft link to the engine's +public+ directory.  Voodoo in the engine takes care of looking there for assets (see Gory Details below.)  If your OS is allergic to symlinks, the files are copied instead.
 
-Run your pending migrations and fire up <tt>rails s</tt>, you're be good to go.
+Run your pending migrations and fire up <tt>rails s</tt>, you're good to go.
 
 == Gory Details
 
