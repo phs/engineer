@@ -85,6 +85,10 @@ RAKE
         Rails.application.class.name.split('::').first
       end
 
+      def engineer_version
+        Gem.loaded_specs["engineer"].version
+      end
+
     end
   end
 end

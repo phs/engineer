@@ -4,6 +4,7 @@ require "rails"
 module <%= app_module %><%#%>
   class Engine < Rails::Engine
     ASSET_PREFIX = "<%= app_name %><%#%>"
+    ENGINEER_VERSION = "<%= engineer_version %><%#%>"
 
     initializer "<%= app_name %><%#%>.action_view.identifier_collection" do
       require 'action_view/template'
