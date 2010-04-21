@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Phil Smith"]
   s.date = %q{2010-04-20}
-  s.description = %q{Engineer gives you rake tasks to wrap your rails 3 as a gem, equipping it with tasks to handle migrations and public files. *lies*}
+  s.description = %q{Turn your rails 3 app into an embeddable engine gem, with answers for db migrations, static assets and more.}
   s.email = %q{phil.h.smith@gmail.com}
   s.extra_rdoc_files = [
     "LICENSE",
@@ -42,7 +42,7 @@ Gem::Specification.new do |s|
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.6}
-  s.summary = %q{Turn rails 3 apps into engines}
+  s.summary = %q{Turn rails 3 applications into engines}
   s.test_files = [
     "spec/spec_helper.rb"
   ]

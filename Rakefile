@@ -5,8 +5,8 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "engineer"
-    gem.summary = %Q{Turn rails 3 apps into engines}
-    gem.description = %Q{Engineer gives you rake tasks to wrap your rails 3 as a gem, equipping it with tasks to handle migrations and public files. *lies*}
+    gem.summary = %Q{Turn rails 3 applications into engines}
+    gem.description = %Q{Turn your rails 3 app into an embeddable engine gem, with answers for db migrations, static assets and more.}
     gem.email = "phil.h.smith@gmail.com"
     gem.homepage = "http://github.com/phs/engineer"
     gem.authors = ["Phil Smith"]
