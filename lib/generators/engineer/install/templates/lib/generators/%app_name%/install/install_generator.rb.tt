@@ -1,4 +1,4 @@
-module <%= app_module %>
+module <%= app_module %><%#%>
   module Generators
     class InstallGenerator < Rails::Generators::Base
 
@@ -8,6 +8,10 @@ module <%= app_module %>
 
       def install_rake_tasks
         directory '.', File.join("lib", "tasks")
+      end
+
+      def rake_engine_update
+        rake "<%= app_name %>:update"
       end
 
     end
