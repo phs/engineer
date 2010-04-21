@@ -142,13 +142,53 @@ Run your pending migrations and fire up <tt>rails s</tt>, you're good to go.
 
 == Gory Details
 
+Rails' engine support has become robust with the release of rails 3.  There are still a few pain points which engineer tries to address.  It does so by making some decisions for you, the engine author.  In the spirit of openness, the introduced voodoo is not buried inside the engineer gem but copied into the engine app on installation.  It's your gem, feel free to tailor it to your needs.
+
+Some intrepid adventurers will ask for an explanation of the generated engine's internals; here is an overview.
+
+=== Database Migrations
+
+Engine database migrations are a tricky problem.  Luckily for me, some very clever people already hammered out a workable idea, which engineer implements.
+
+The migrations are packaged in the gem along with the rest of the engine.  When the host author installs or updates the gem, she runs the <tt><engine_name>:db:migrate</tt> rake task (directly, or indirectly through <tt><engine_name>:update</tt>.)  This copies the engine migrations into the host application, changing a few things on the way.
+
+Specifically:
+1. The migration numbers are reassigned.
+2. The engine name is inserted into the new migration name.
+
+The numbers are reassigned so that the copied migrations preserve their relative order, and yet occur after all previous migrations in the host application.  This guarantees that the host application has a linear schema history, by making that history explicit.  Put another way, the final host migrations should reflect the evolution of the _host_ schema, not the _engine_ schema from which it was derived.
+
+The engine name is inserted to avoid name collisions.  It allows the engine to see what migrations have already been copied into the host app; it will not attempt to copy them again.  Changing the migration name implies changing the contained migration class name as well: the rake task will normally take care of it.
+
+Interested readers could also check out
+* The original discussion: https://rails.lighthouseapp.com/projects/8994/tickets/2058
+* James Adam's related blog post: http://interblah.net/plugin-migrations
+
+=== Static Assets and Asset Helpers
+
+Separation of assets is another issue facing engines.  While it is certainly useful to harness the host's layouts and styling, engines will inescapably need their own stylesheets, scripts, etc.
+
+Rails provides conventions about where those assets live and what they are named, and backs those conventions up with helpers that "just work."  The problem is (for example), the host and engine master stylesheets can't both live at <tt>public/stylesheets/application.css</tt>.  So we need two separate places to keep assets, and a way of hiding this separation when it is convenient.
+
+Many http servers serve static assets more efficiently than dynamic ones generated from frameworks like rails.  Any serious solution to the problem will need to respect this optimization.  So, assuming the web server wants to be dumb, the separate asset locations will be apparent in the URIs.  The browser only fetches the URIs the application gives it, so the application must know to render engine asset URIs for engine assets, and host asset URIs otherwise.  These URIs are created by asset tag helpers such as +image_tag+ and +stylesheet_link_tag+.
+
+An engine author could visit each tag and stick (for example) <tt>my_engine/</tt> in front of the asset names, but that stinks.  It also breaks the engine when run as a normal application.  Instead, the asset helpers called by the engine must create engine asset URIs only when the engine is run as such.
+
+Enter +asset_path+.  This is an +action_controller+ configuration hook provided by rails to control how asset URIs are generated.  It can be set on a controller class, and it is inherited by subclasses.  By default, it provides rails' cache-busting ability (the <tt>?123line-noise456</tt> on the end of your stylesheet URIs.)  Engineer hijacks it to provide asset separation.
+
+Recall that engineer's install generator moves <tt>application_controller.rb</tt> into an engine-specific namespace: this is why.  On startup, a <tt>MyEngine::Engine</tt> initializer sets an +asset_path+ on <tt>MyEngine::ApplicationController</tt>.  Since this controller is no longer the global +ApplicationController+, we're ensured this +asset_path+ will affect not only all the engine controllers, but only them.  The initializers in <tt>MyEngine::Engine</tt> are only run when the application is started as an engine.  Thus when +my_engine+ is fired up as a normal application, the custom +asset_path+ is not used.
+
+Almost there.  +asset_path+ can take as value either a string template (such as <tt>"/my_engine%s"</tt>) or a lambda.  If the engine and host authors were not interested in sharing layouts and other views, <tt>"/my_engine%s"</tt> would be enough.  There, all asset tags rendered by any view from an engine controller will target the engine's assets.  This goes bad when an engine view wants to render with a host layout that includes a stylesheet: the stylesheet URI would point into the engine, not the host.
+
+A little more (and arguably too much) leg work can save us.  The flaw is that we want the customized URI not when requesting an engine _controller_, but when rendering an engine _view_.  If you have one around, open up <tt>lib/my_engine/engine.rb</tt>.  There is another initializer in there that duck punches <tt>ActionView::Template#render</tt>.  When a template is rendered, its +identifier+ is captured.  For templates loaded from files, this is a file system path descending from a <tt>config.paths.app.views</tt> of either the host or the engine.  Thus we can distinguish host templates from engine templates.  Engine assets are generated for engine views and non-file system views.
+
 == Running the Tests
 
 The (sparse) tests are written with cucumber (http://cukes.info) and can be run with just "rake".  You may need to install jeweler first.
 
 == Thanks
 
-This tool would not exist if the road had not already been well-paved by many others.  Specifically, James Adams' herculean effort in the rails 2.3 engines plugin has illuminated many issues and solutions (engineer's db migration strategy was his idea.)  Thanks also to the rails core team for incorporating many engine-centric ideas into the framework, vastly simplifying what this tool needs to do.  And also for just making an awesome framework.
+This tool would not exist if the road had not already been well-paved by many others.  Specifically, James Adam's herculean effort in the rails 2.3 engines plugin has illuminated many issues and solutions.  Thanks also to the rails core team for incorporating many engine-centric ideas into the framework, vastly simplifying what this tool needs to do.  And also for just making an awesome framework.
 
 Finally, thanks to SEOmoz (http://seomoz.org) for letting me build this at my desk in the afternoons instead of on the couch in the middle of the night ^_^.
 
