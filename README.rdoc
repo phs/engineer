@@ -82,7 +82,7 @@ the +Rakefile+, so here it is.
 
 As you can see, your bundler dependencies will be included in the generated gemspec.
 
-Let's fill out the gem metadata (anything with a TODO in it) and make a gem:
+Let's make a gem:
  $ rake build
   (in /Users/phil/Public/code/my_engine)
   Expected VERSION or VERSION.yml to exist. See version:write to create an initial one.
@@ -91,6 +91,19 @@ Whoops.  Our gem needs to know what version it is, and we haven't told it.  Star
  $ rake version:write
   (in /Users/phil/Public/code/my_engine)
   Updated version: 0.0.0
+
+ $ rake build
+  (in /Users/phil/Public/code/my_engine)
+  Generated: my_engine.gemspec
+  my_engine.gemspec is valid.
+  rake aborted!
+  "FIXME" or "TODO" is not an author
+
+  (See full trace by running task with --trace)
+
+Doh.  Remember all those TODOs (summary, author, etc) in the Rakefile metadata?  Go fill those out.
+
+Once more:
  $ rake build
   (in /Users/phil/Public/code/my_engine)
   Generated: my_engine.gemspec
