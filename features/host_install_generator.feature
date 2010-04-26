@@ -19,6 +19,7 @@ Feature: Engine Installation into a Host App
       """
              exist  lib/tasks
             create  lib/tasks/my_engine.rake
+              rake  my_engine:update
       """
 
     When I rake -T

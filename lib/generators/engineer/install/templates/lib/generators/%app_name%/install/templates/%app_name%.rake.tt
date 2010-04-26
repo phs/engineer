@@ -18,21 +18,21 @@ namespace "<%= app_name %><%#%>" do
 
       migrations = Dir[File.join <%= app_module %><%#%>::Engine.root, *%w{db migrate [0-9]*_*.rb}]
       migrations.sort.each do |old_migration|
-        mkdir_p db_migrate unless File.exists? db_migrate
-
         old_name = File.basename(old_migration).match(/\d+_(.*)\.rb/)[1]
         new_name = "<%= app_name %><%#%>_#{old_name}"
 
         next unless Dir[File.join(db_migrate, "[0-9]*_#{new_name}.rb")].empty?
+        mkdir_p db_migrate unless File.exists? db_migrate
 
         migration_number = ActiveRecord::Generators::Base.next_migration_number(db_migrate)
         new_migration = File.join db_migrate, "#{migration_number}_#{new_name}.rb"
-
-        puts new_migration
+        tmp_migration = File.join Dir::tmpdir, "#{migration_number}_#{new_name}.rb"
 
         migration_source = File.read(old_migration)
         migration_source.gsub! "class #{old_name.camelize}", "class #{new_name.camelize}"
-        File.open(new_migration, "w") { |f| f << migration_source }
+        File.open(tmp_migration, "w") { |f| f << migration_source }
+
+        cp tmp_migration, new_migration
 
         # TODO Kill after https://rails.lighthouseapp.com/projects/8994-ruby-on-rails/tickets/4412
         sleep 1 # wait for timestamp to change.
