@@ -11,7 +11,10 @@ class Engineer
       end
 
       def namespace_application_controller
-        unnested_path = Rails.application.paths.app.controllers.to_a.detect { |p| File.exists?(File.join(p, 'application_controller.rb')) }
+        unnested_path = Rails.application.paths.app.controllers.to_a.detect do |p|
+          File.exists? File.join(p, 'application_controller.rb')
+        end
+
         return unless unnested_path
 
         nested_path = File.join(unnested_path, app_name)
@@ -25,9 +28,12 @@ class Engineer
 
         remove_file File.join(unnested_path, 'application_controller.rb')
 
-        controller_files = Rails.application.paths.app.controllers.to_a.collect { |p| Dir[File.join(p, "**", "*_controller.rb")] }.flatten
-        controller_files.reject { |f| f =~ /application_controller\.rb$/ }.each do |controller_file|
-          gsub_file controller_file, "< ApplicationController", "< #{app_module}::ApplicationController"
+        controller_files = Rails.application.paths.app.controllers.to_a.collect do |p|
+          Dir[File.join(p, "**", "*_controller.rb")]
+        end.flatten
+
+        controller_files.reject { |f| f =~ /application_controller\.rb$/ }.each do |file|
+          gsub_file file, "< ApplicationController", "< #{app_module}::ApplicationController"
         end
       end
 
@@ -70,9 +76,10 @@ RAKE
         end
       end
 
-      # TODO: Unneeded once https://rails.lighthouseapp.com/projects/8994-ruby-on-rails/tickets/4400 is applied
+      # TODO Remove after https://rails.lighthouseapp.com/projects/8994-ruby-on-rails/tickets/4400
       def tweak_route_declaration
-        gsub_file File.join("config", "routes.rb"), /#{Rails.application.class}.routes.draw/, "Rails.application.routes.draw"
+        gsub_file(File.join("config", "routes.rb"),
+          /#{Rails.application.class}.routes.draw/, "Rails.application.routes.draw")
       end
 
     protected

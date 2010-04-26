@@ -16,24 +16,25 @@ namespace "<%= app_name %><%#%>" do
       require 'rails/generators/active_record'
       db_migrate = File.join(%w{db migrate})
 
-      Dir[File.join(<%= app_module %><%#%>::Engine.root, *%w{db migrate [0-9]*_*.rb})].sort.each do |original_migration|
+      migrations = Dir[File.join <%= app_module %><%#%>::Engine.root, *%w{db migrate [0-9]*_*.rb}]
+      migrations.sort.each do |old_migration|
         mkdir_p db_migrate unless File.exists? db_migrate
 
-        original_migration_name = File.basename(original_migration).match(/\d+_(.*)\.rb/)[1]
-        copied_migration_name = "<%= app_name %><%#%>_#{original_migration_name}"
+        old_name = File.basename(old_migration).match(/\d+_(.*)\.rb/)[1]
+        new_name = "<%= app_name %><%#%>_#{old_name}"
 
-        next unless Dir[File.join(db_migrate, "[0-9]*_#{copied_migration_name}.rb")].empty?
+        next unless Dir[File.join(db_migrate, "[0-9]*_#{new_name}.rb")].empty?
 
         migration_number = ActiveRecord::Generators::Base.next_migration_number(db_migrate)
-        copied_migration = File.join(db_migrate, "#{migration_number}_#{copied_migration_name}.rb")
+        new_migration = File.join db_migrate, "#{migration_number}_#{new_name}.rb"
 
-        puts copied_migration
+        puts new_migration
 
-        migration_source = File.read(original_migration)
-        migration_source.gsub! "class #{original_migration_name.camelize}", "class #{copied_migration_name.camelize}"
-        File.open(copied_migration, "w") { |f| f << migration_source }
+        migration_source = File.read(old_migration)
+        migration_source.gsub! "class #{old_name.camelize}", "class #{new_name.camelize}"
+        File.open(new_migration, "w") { |f| f << migration_source }
 
-        # TODO: This is unnecessary once https://rails.lighthouseapp.com/projects/8994-ruby-on-rails/tickets/4412 gets in
+        # TODO Kill after https://rails.lighthouseapp.com/projects/8994-ruby-on-rails/tickets/4412
         sleep 1 # wait for timestamp to change.
       end
     end
@@ -42,7 +43,10 @@ namespace "<%= app_name %><%#%>" do
 
   desc "Link (or copy) <%= app_name %><%#%>'s static assets"
   task :assets => :environment do
-    engine_asset_path = File.join(Rails.application.paths.public.to_a.first, <%= app_module %><%#%>::Engine::ASSET_PREFIX)
+    engine_asset_path = File.join(
+      Rails.application.paths.public.to_a.first,
+      <%= app_module %><%#%>::Engine::ASSET_PREFIX)
+
     rm_rf engine_asset_path
     begin
       ln_s <%= app_module %><%#%>::Engine.paths.public.to_a.first, engine_asset_path

@@ -62,11 +62,13 @@ module Helpers
   def fill_out_the_rakefile_gemspec
     in_current_app do
       rakefile = File.read('Rakefile')
-      rakefile.gsub! 'gem.summary = %Q{TODO: one-line summary of your engine}',       'gem.summary = %Q{My awesome engine}'
-      rakefile.gsub! 'gem.description = %Q{TODO: longer description of your engine}', 'gem.description = %Q{My awesome, beautiful engine}'
-      rakefile.gsub! 'gem.email = "TODO"',                                            'gem.email = "awesome-beautiful-me@example.com"'
-      rakefile.gsub! 'gem.homepage = "TODO"',                                         'gem.homepage = "http://example.com/"'
-      rakefile.gsub! 'gem.authors = ["TODO"]',                                        'gem.authors = ["Awesome, Beautiful Me"]'
+      rakefile.gsub!(
+        '%Q{TODO: one-line summary of your engine}',   '%Q{My awesome engine}')
+      rakefile.gsub!(
+        '%Q{TODO: longer description of your engine}', '%Q{My awesome, beautiful engine}')
+      rakefile.gsub!('gem.email = "TODO"',     'gem.email = "me@example.com"')
+      rakefile.gsub!('gem.homepage = "TODO"',  'gem.homepage = "http://example.com/"')
+      rakefile.gsub!('gem.authors = ["TODO"]', 'gem.authors = ["Me"]')
       File.open('Rakefile', 'w') { |f| f << rakefile }
     end
   end
@@ -133,7 +135,7 @@ private
 
 end
 
-# TODO: join from Dir::tmpdir once https://rails.lighthouseapp.com/projects/8994/tickets/4442 is in.
+# TODO join from Dir::tmpdir after https://rails.lighthouseapp.com/projects/8994/tickets/4442
 WORKSPACE = File.join("/tmp", "engineer-cucumber-#{$$}").tap do |tmpdir|
   mkdir_p tmpdir
   mkdir_p File.join(tmpdir, 'apps')

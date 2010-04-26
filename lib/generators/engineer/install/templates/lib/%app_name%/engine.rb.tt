@@ -16,20 +16,25 @@ module <%= app_module %><%#%>
           Thread.current[:view_identifiers].pop
         end
 
-        alias_method_chain :render, :identifier_collection unless instance_methods.include? "render_without_identifier_collection"
+        unless instance_methods.include? "render_without_identifier_collection"
+          alias_method_chain :render, :identifier_collection
+        end
       end
     end
 
     def engine_view?(identifier)
       @engine_views ||= Hash.new do |h, identifier|
-        h[identifier] = !Rails.application.paths.app.views.any? { |path| identifier =~ /^#{Regexp.escape(path)}/ }
+        h[identifier] = !Rails.application.paths.app.views.any? do |path|
+          identifier =~ /^#{Regexp.escape(path)}/
+        end
       end
       @engine_views[identifier]
     end
 
     initializer "<%= app_name %><%#%>.asset_path" do
       <%= app_module %><%#%>::ApplicationController.config.asset_path = lambda do |source|
-        engine_view?((Thread.current[:view_identifiers] ||= []).last) ? "/#{ASSET_PREFIX}#{source}" : source
+        view_identifier = (Thread.current[:view_identifiers] ||= []).last
+        engine_view?(view_identifier) ? "/#{ASSET_PREFIX}#{source}" : source
       end
     end
   end
