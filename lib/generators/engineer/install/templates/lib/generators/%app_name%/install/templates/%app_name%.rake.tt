@@ -1,6 +1,6 @@
 namespace "<%= app_name %><%#%>" do
 
-  desc "Update all of <%= app_name %><%#%>'s related resources"
+  desc "Import <%= app_name %><%#%>'s assets and new db migrations"
   task :update => [:assets, "db:migrate"]
 
   namespace :db do<%# TODO: not everyone uses active record. %>
@@ -11,7 +11,7 @@ namespace "<%= app_name %><%#%>" do
       load(seed_file) if File.exist?(seed_file)
     end
 
-    desc "Import <%= app_name %><%#%>'s migrations"
+    desc "Import <%= app_name %><%#%>'s new db migrations"
     task :migrate do
       require 'rails/generators/active_record'
       db_migrate = File.join(%w{db migrate})
@@ -71,13 +71,13 @@ namespace :engines do
   desc "Load seed data from all engines"
   task "db:seed" => "<%= app_name %><%#%>:db:seed"
 
-  desc "Import migrations from all engines"
+  desc "Import new migrations from all engines"
   task "db:migrate" => "<%= app_name %><%#%>:db:migrate"
 
   desc "Link (or copy) static assets from all engines"
   task :assets, [:copy] => "<%= app_name %><%#%>:assets"
 
-  desc "Update related resources from all engines"
+  desc "Import assets and new db migrations from all engines"
   task :update => "<%= app_name %><%#%>:update"
 
 end
