@@ -22,10 +22,16 @@ Feature: Engine Installation into a Host App
               rake  my_engine:update
       """
 
+    And I should see output:
+      """
+      rm -rf /${HOST_PATH}/host/public/my_engine
+      ln -s /${GEM_REPO}/gems/my_engine-0.0.0/public /${HOST_PATH}/host/public/my_engine
+      """
+
     When I rake -T
     Then I should see output:
       """
-      rake my_engine:assets                     # Link (or copy) my_engine's static assets
+      rake my_engine:assets[copy]               # Link (or copy) my_engine's static assets
       rake my_engine:db:migrate                 # Import my_engine's migrations
       rake my_engine:db:seed                    # Load my_engine's seed data
       rake my_engine:update                     # Update all of my_engine's related resources
@@ -33,8 +39,15 @@ Feature: Engine Installation into a Host App
 
     And I should see output:
       """
-      rake engines:assets                       # Link (or copy) static assets from all engines
+      rake engines:assets[copy]                 # Link (or copy) static assets from all engines
       rake engines:db:migrate                   # Import migrations from all engines
       rake engines:db:seed                      # Load seed data from all engines
       rake engines:update                       # Update related resources from all engines
+      """
+
+    When I rake my_engine:assets[true]
+    Then I should see output:
+      """
+      rm -rf /${HOST_PATH}/host/public/my_engine
+      cp -r /${GEM_REPO}/gems/my_engine-0.0.0/public /${HOST_PATH}/host/public/my_engine
       """

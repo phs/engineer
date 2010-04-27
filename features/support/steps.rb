@@ -34,7 +34,7 @@ When "I fill out my Rakefile gemspec" do
 end
 
 Then "I should see output:" do |command_output|
-  latest_output.strip_ansi.strip.should include command_output.strip
+  latest_output.strip_ansi.strip.should match strip_wildcards(command_output.strip)
 end
 
 Then "$file should contain:" do |file, content|

@@ -42,17 +42,26 @@ namespace "<%= app_name %><%#%>" do
   end
 
   desc "Link (or copy) <%= app_name %><%#%>'s static assets"
-  task :assets => :environment do
+  task :assets, [:copy] => :environment do |t, args|
     engine_asset_path = File.join(
       Rails.application.paths.public.to_a.first,
       <%= app_module %><%#%>::Engine::ASSET_PREFIX)
 
     rm_rf engine_asset_path
-    begin
-      ln_s <%= app_module %><%#%>::Engine.paths.public.to_a.first, engine_asset_path
-    rescue NotImplemented
-      cp_r <%= app_module %><%#%>::Engine.paths.public.to_a.first, engine_asset_path
+    host_asset_path = <%= app_module %><%#%>::Engine.paths.public.to_a.first
+
+    link = lambda do
+      begin
+        ln_s host_asset_path, engine_asset_path
+        true
+      rescue NotImplementedError
+        false
+      end
     end
+
+    copy = lambda { cp_r host_asset_path, engine_asset_path }
+
+    not args[:copy] and link.call or copy.call
   end
 
 end
@@ -66,7 +75,7 @@ namespace :engines do
   task "db:migrate" => "<%= app_name %><%#%>:db:migrate"
 
   desc "Link (or copy) static assets from all engines"
-  task :assets => "<%= app_name %><%#%>:assets"
+  task :assets, [:copy] => "<%= app_name %><%#%>:assets"
 
   desc "Update related resources from all engines"
   task :update => "<%= app_name %><%#%>:update"
