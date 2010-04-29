@@ -3,40 +3,92 @@ namespace "<%= app_name %><%#%>" do
   desc "Import <%= app_name %><%#%>'s assets and new db migrations"
   task :update => [:assets, "db:migrate"]
 
-  namespace :db do<%# TODO: not everyone uses active record. %>
+  namespace :db do #<%# TODO: not everyone uses active record. %>
 
-    desc "Load <%= app_name %><%#%>'s seed data"
-    task :seed => :environment do
-      seed_file = File.join(<%= app_module %><%#%>::Engine.root, 'db', 'seeds.rb')
-      load(seed_file) if File.exist?(seed_file)
+    def import_migration(original_file, new_migration_name, &block)
+      require 'rails/generators/active_record'
+      db_migrate = File.join Rails.root, *%w{db migrate}
+      mkdir_p db_migrate unless File.exists? db_migrate
+
+      migration_number = ActiveRecord::Generators::Base.next_migration_number(db_migrate)
+      new_migration = File.join db_migrate, "#{migration_number}_#{new_migration_name}.rb"
+      tmp_migration = File.join Dir::tmpdir, "#{migration_number}_#{new_migration_name}.rb"
+
+      File.open(tmp_migration, "w") do |f|
+        f << block.call(File.read original_file)
+      end
+
+      cp tmp_migration, new_migration
     end
 
     desc "Import <%= app_name %><%#%>'s new db migrations"
     task :migrate do
       require 'rails/generators/active_record'
-      db_migrate = File.join(%w{db migrate})
+      db_migrate = File.join Rails.root, *%w{db migrate}
 
+      # Consider the set of engine migrations, in chronological order.
       migrations = Dir[File.join <%= app_module %><%#%>::Engine.root, *%w{db migrate [0-9]*_*.rb}]
-      migrations.sort.each do |old_migration|
+      migrations.sort!
+
+      # See if the host already has a schema migration.
+      last_migration_in_schema = migrations.reverse.detect do |migration|
+        name = File.basename(migration).match(/\d+_(.*)\.rb/)[1]
+        Dir[File.join(db_migrate, "[0-9]*_<%= app_name %><%#%>_schema_after_#{name}.rb")].any?
+      end
+
+      # If so, do not import any migrations implied by the schema
+      # (recall slice! *removes* the indicated range, leaving the rest.)
+      migrations.slice! 0..migrations.index(last_migration_in_schema) if last_migration_in_schema
+
+      # Of the remainder
+      migrations.each do |old_migration|
         old_name = File.basename(old_migration).match(/\d+_(.*)\.rb/)[1]
         new_name = "<%= app_name %><%#%>_#{old_name}"
 
-        next unless Dir[File.join(db_migrate, "[0-9]*_#{new_name}.rb")].empty?
-        mkdir_p db_migrate unless File.exists? db_migrate
+        # Skip this single migration if we already have it
+        next if Dir[File.join(db_migrate, "[0-9]*_#{new_name}.rb")].any?
 
-        migration_number = ActiveRecord::Generators::Base.next_migration_number(db_migrate)
-        new_migration = File.join db_migrate, "#{migration_number}_#{new_name}.rb"
-        tmp_migration = File.join Dir::tmpdir, "#{migration_number}_#{new_name}.rb"
-
-        migration_source = File.read(old_migration)
-        migration_source.gsub! "class #{old_name.camelize}", "class #{new_name.camelize}"
-        File.open(tmp_migration, "w") { |f| f << migration_source }
-
-        cp tmp_migration, new_migration
+        import_migration old_migration, new_name do |migration_source|
+          migration_source.gsub "class #{old_name.camelize}", "class #{new_name.camelize}"
+        end
 
         # TODO Kill after https://rails.lighthouseapp.com/projects/8994-ruby-on-rails/tickets/4412
         sleep 1 # wait for timestamp to change.
       end
+    end
+
+    desc "Import <%= app_name %><%#%>'s schema as a db migration"
+    task :schema do
+      schema = File.join <%= app_module %><%#%>::Engine.root, *%w{db schema.rb}
+      if File.exist? schema
+        migrations = Dir[File.join <%= app_module %><%#%>::Engine.root, *%w{db migrate [0-9]*_*.rb}]
+        latest_migration = migrations.sort.last
+
+        migration_name = if latest_migration
+          latest_migration_name = File.basename(latest_migration).match(/^\d+_(.+)\.rb$/)[1]
+          "<%= app_name %><%#%>_schema_after_#{latest_migration_name}"
+        else
+          "<%= app_name %><%#%>_schema"
+        end
+
+        import_migration schema, migration_name do |schema_source|
+          # Strip schema declaration, insert 'def self.up' for migration
+          schema_source.gsub!(
+            /\A.*^ActiveRecord::Schema.define\(:version => \d+\) do/m,
+            'def self.up')
+
+          # Indent everything 2 spaces
+          schema_source.gsub! /^/, "  "
+
+          "class #{migration_name.camelize} < ActiveRecord::Migration\n#{schema_source}end\n"
+        end
+      end
+    end
+
+    desc "Load <%= app_name %><%#%>'s seed data"
+    task :seed => :environment do
+      seed_file = File.join(<%= app_module %><%#%>::Engine.root, 'db', 'seeds.rb')
+      load(seed_file) if File.exist?(seed_file)
     end
 
   end

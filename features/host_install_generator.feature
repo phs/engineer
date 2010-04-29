@@ -19,7 +19,7 @@ Feature: Engine Installation into a Host App
       """
              exist  lib/tasks
             create  lib/tasks/my_engine.rake
-              rake  my_engine:update
+              rake  my_engine:assets my_engine:db:schema my_engine:db:migrate
       """
 
     And I should see output:
@@ -33,6 +33,7 @@ Feature: Engine Installation into a Host App
       """
       rake my_engine:assets[copy]               # Link (or copy) my_engine's static assets
       rake my_engine:db:migrate                 # Import my_engine's new db migrations
+      rake my_engine:db:schema                  # Import my_engine's schema as a db migration
       rake my_engine:db:seed                    # Load my_engine's seed data
       rake my_engine:update                     # Import my_engine's assets and new db migrations
       """

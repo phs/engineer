@@ -42,7 +42,7 @@ The two major take-aways from this are
 
 The Gory Details below explain more deeply, but for now let's just look at the new +Rakefile+
 content:
- $ cat Rakefile 
+ $ cat Rakefile
   # ...
 
   Engineer::Tasks.new do |gem|
@@ -117,7 +117,7 @@ Once more:
 There we go, there's an engine gem sitting in <tt>pkg/</tt>, go nuts.  See jeweler's documentation
 for managing the version, pushing to gemcutter and other goodies.
 
-== Using Engine Gems
+== Installing Engine Gems
 
 How about the other side of the fence?  To install an engine into a host application, the host
 author follows a similar workflow.
@@ -128,47 +128,65 @@ First, add a line to the +Gemfile+ and call bundler:
 
 A new generator will be available, named <tt>my_engine:install</tt>; run it.
  $ rails g my_engine:install
-       exist  lib/tasks
-      create  lib/tasks/my_engine.rake
+         exist  lib/tasks
+        create  lib/tasks/my_engine.rake
+          rake  my_engine:assets my_engine:db:schema my_engine:db:migrate
+  rm -rf /.../host/public/my_engine
+  ln -s /.../gems/my_engine-0.0.0/public /.../host/public/my_engine
+  mkdir -p db/migrate
+  cp /tmp/20100428232715_my_engine_schema_after_create_comments.rb /.../host/db/migrate/20100428232715_my_engine_schema_after_create_comments.rb
 
-Some new rake tasks are available:
+This includes the engine's static assets in a subdirectory under the host's +public+.  Voodoo in
+the engine takes care of looking there for assets (see Gory Details below.)  If your OS is
+allergic to symlinks, the files are copied instead.
+
+The engine's schema is also added as a new database migration without running it.  The host author
+is free to take a peek at it before deciding to <tt>rake db:migrate</tt> for real.
+
+Run your pending migrations and fire up <tt>rails s</tt>, you're good to go.
+
+== Managing Engine Gems
+
+After installation, some new rake tasks are available:
  $ rake -T my_engine
   (in /Users/phil/Public/code/host)
-  rake my_engine:assets      # Link (or copy) my_engine's static assets
-  rake my_engine:db:migrate  # Import my_engine's migrations
-  rake my_engine:db:seed     # Load my_engine's seed data
-  rake my_engine:update      # Update all of my_engine's related resources
+  rake my_engine:assets[copy]               # Link (or copy) my_engine's static assets
+  rake my_engine:db:migrate                 # Import my_engine's new db migrations
+  rake my_engine:db:schema                  # Import my_engine's schema as a db migration
+  rake my_engine:db:seed                    # Load my_engine's seed data
+  rake my_engine:update                     # Import my_engine's assets and new db migrations
 
-Catch-all tasks are also available:
+There are catch-all tasks as well:
  $ rake -T engines
   (in /Users/phil/Public/code/host)
-  rake engines:assets      # Link (or copy) static assets from all engines
-  rake engines:db:migrate  # Import migrations from all engines
-  rake engines:db:seed     # Load seed data from all engines
-  rake engines:update      # Update related resources from all engines
+  rake engines:assets[copy]                 # Link (or copy) static assets from all engines
+  rake engines:db:migrate                   # Import new migrations from all engines
+  rake engines:db:seed                      # Load seed data from all engines
+  rake engines:update                       # Import assets and new db migrations from all engines
 
-These let the host author manage the newly-installed (or updated!) engine.  Let's get any pending
-migrations:
+These let the host author manage the newly-installed (or updated!) engine.  If the host
+application revs the version of the engine gem, any new engine db migrations can be imported into
+the host app with:
  $ rake my_engine:db:migrate
   (in /Users/phil/Public/code/host)
   mkdir -p db/migrate
-  db/migrate/20100420231621_my_engine_create_posts.rb
+  cp /tmp/20100428232715_my_engine_create_tags.rb /.../host/db/migrate/20100428232715_my_engine_create_tags.rb
+  cp /tmp/20100428232716_my_engine_create_taggings.rb /.../host/db/migrate/20100428232716_my_engine_create_taggings.rb
 
-This doesn't actually run any engine migrations, but instead copies new ones (with mild munging)
-to <tt>db/migrate</tt>.  The host author is free to take a peek at them before deciding to
-<tt>rake db:migrate</tt> for real.
+As before, this doesn't actually run any engine migrations but instead copies new ones (with mild
+munging) to <tt>db/migrate</tt>.
 
-Now lets wire up the engine's static assets (stylesheets, images and so on):
+The engine's static assets (stylesheets, images and so on) can be updated with:
  $ rake my_engine:assets
   (in /Users/phil/Public/code/host)
   rm -rf /Users/phil/Public/code/host/public/my_engine
-  ln -s /opt/local/lib/ruby/gems/1.8/gems/my_engine-0.0.0/public /Users/phil/Public/code/host/public/my_engine
+  ln -s /.../gems/my_engine-0.0.1/public /.../host/public/my_engine
 
-Take a peek in <tt>public/</tt>, you've grown a +my_engine+ soft link to the engine's +public+
-directory.  Voodoo in the engine takes care of looking there for assets (see Gory Details below.)
-If your OS is allergic to symlinks, the files are copied instead.
+Even when using soft-links, updating the assets is important: you need the symlink pointing into
+the correct gem version.
 
-Run your pending migrations and fire up <tt>rails s</tt>, you're good to go.
+One can do both in a single shot with <tt>rake my_engine:update</tt>.  Or with
+<tt>rake engines:update</tt> to hit all engines at once.
 
 == Gory Details
 
@@ -187,9 +205,9 @@ Engine database migrations are a tricky problem.  Luckily for me, some very clev
 hammered out a workable idea, which engineer implements.
 
 The migrations are packaged in the gem along with the rest of the engine.  When the host author
-installs or updates the gem, she runs the <tt><engine_name>:db:migrate</tt> rake task (directly,
-or indirectly through <tt><engine_name>:update</tt>.)  This copies the engine migrations into the
-host application, changing a few things on the way.
+updates the gem, she runs the <tt><engine_name>:db:migrate</tt> rake task (directly, or indirectly
+through <tt><engine_name>:update</tt>.)  This copies the engine migrations into the host
+application, changing a few things on the way.
 
 Specifically:
 1. The migration numbers are reassigned.
@@ -209,6 +227,44 @@ normally take care of it.
 Interested readers could also check out
 * The original discussion: https://rails.lighthouseapp.com/projects/8994/tickets/2058
 * James Adam's related blog post: http://interblah.net/plugin-migrations
+
+=== Schemas
+
+It is recommended practice to avoid running a long string of migrations when setting up a new
+database, since the migration process can become slow and brittle.  Analogously, engines should be
+able to (and can) create their schemas in the host database without running a long string of
+migrations.
+
+It is a very real use case for a host application author to add a new engine after the host schema
+has been created and deployed to production.  Deployment tools like cap and vlad know how to run
+pending migrations at the right time, but they don't understand (out of the box) how to run an
+engine-specific <tt>db:schema:load</tt>.  It would be really great if they didn't have to.
+
+Engineer engines satisfy these two requirements by importing the engine schema into the host
+application as a migration.  A naming convention is used to identify engine migrations that are
+implied by the schema: the schema migration will be named something like
++my_engine_schema_after_create_posts+.  This indicates that all engine migrations before (and
+including) +create_posts+ should be considered to be already run.  If there are no engine
+migrations to skip (because the engine author removed them) then the name +my_engine_schema+ is
+used instead.
+
+No effort is made to make this schema migration reversible.
+
+=== Seeding
+
+Similar to loading a schema, seeding initial database rows is another task that should only be run
+once per database.
+
+Engineer engines provide two ways to load the engine's <tt>db/seeds.rb</tt>.  The first is a rake
+task, which the host-level <tt>rake db:seed</tt> is made to depend on.  This is meant for new
+databases being set up after the engine's schema has been incorporated into the host's.  All seed
+rows will be loaded together at the usual time, just as all the tables were created together.
+
+< TODO: lies>
+The other way seed data can be loaded is at the end of the engine's generated schema migration.
+This is appropriate for installing a new engine into an established application, such as in a
+production deploy.
+< /lies >
 
 === Static Assets and Asset Helpers
 
