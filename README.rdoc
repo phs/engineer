@@ -256,9 +256,9 @@ Similar to loading a schema, seeding initial database rows is another task that 
 once per database.
 
 Engineer engines provide two ways to load the engine's <tt>db/seeds.rb</tt>.  The first is a rake
-task, which the host-level <tt>rake db:seed</tt> is made to depend on.  This is meant for new
-databases being set up after the engine's schema has been incorporated into the host's.  All seed
-rows will be loaded together at the usual time, just as all the tables were created together.
+task, which the host-level <tt>rake db:seed</tt> depends on.  This is meant for new databases
+being set up after the engine's schema has been incorporated into the host's.  All seed rows will
+be loaded together at the usual time, just as all the tables were created together.
 
 The other way seed data can be loaded is in a migration generated on engine installation.  This is
 appropriate for installing a new engine into an established application, such as in a production
