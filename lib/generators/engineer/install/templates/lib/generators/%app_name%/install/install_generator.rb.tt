@@ -11,8 +11,7 @@ module <%= app_module %><%#%>
       end
 
       def rake_engine_install
-        # Migrate after schema in case there is no engine schema: at least we'll get the migrations.
-        rake "<%= app_name %><%#%>:assets <%= app_name %><%#%>:db:schema <%= app_name %><%#%>:db:migrate"
+        rake "<%= app_name %><%#%>:install"
       end
 
     end

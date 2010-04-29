@@ -260,11 +260,9 @@ task, which the host-level <tt>rake db:seed</tt> is made to depend on.  This is 
 databases being set up after the engine's schema has been incorporated into the host's.  All seed
 rows will be loaded together at the usual time, just as all the tables were created together.
 
-< TODO: lies>
-The other way seed data can be loaded is at the end of the engine's generated schema migration.
-This is appropriate for installing a new engine into an established application, such as in a
-production deploy.
-< /lies >
+The other way seed data can be loaded is in a migration generated on engine installation.  This is
+appropriate for installing a new engine into an established application, such as in a production
+deploy.
 
 === Static Assets and Asset Helpers
 

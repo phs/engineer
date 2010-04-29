@@ -19,7 +19,7 @@ Feature: Engine Installation into a Host App
       """
              exist  lib/tasks
             create  lib/tasks/my_engine.rake
-              rake  my_engine:assets my_engine:db:schema my_engine:db:migrate
+              rake  my_engine:install
       """
 
     And I should see output:
