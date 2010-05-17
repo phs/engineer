@@ -63,7 +63,7 @@ content:
     Bundler.definition.dependencies.each do |dependency|
       next if dependency.name == "engineer"
 
-      if (dependency.groups & [:default, :production, :staging]).any?
+      if (dependency.groups & [:default, :production]).any?
         gem.add_dependency dependency.name, *dependency.requirement.as_list
       else
         gem.add_development_dependency dependency.name, *dependency.requirement.as_list
