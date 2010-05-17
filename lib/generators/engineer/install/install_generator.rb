@@ -61,7 +61,7 @@ Engineer::Tasks.new do |gem|
   Bundler.definition.dependencies.each do |dependency|
     next if dependency.name == "engineer"
 
-    if (dependency.groups & [:default, :production, :staging]).any?
+    if (dependency.groups & #{PRODUCTION_GROUPS.inspect}).any?
       gem.add_dependency dependency.name, *dependency.requirement.as_list
     else
       gem.add_development_dependency dependency.name, *dependency.requirement.as_list
@@ -83,6 +83,8 @@ RAKE
       end
 
     protected
+
+      PRODUCTION_GROUPS = [:default, :production, :staging].freeze
 
       def app_name
         app_module.underscore
