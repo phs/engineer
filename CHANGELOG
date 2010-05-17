@@ -1,3 +1,7 @@
+*Engineer 0.2.0*
+
+* Drop staging dependencies from the generated gem's runtime dependencies.
+
 *Engineer 0.1.1*
 
 * Do not include vendor in engine gems by default.

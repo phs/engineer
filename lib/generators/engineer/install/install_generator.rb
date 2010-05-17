@@ -84,7 +84,7 @@ RAKE
 
     protected
 
-      PRODUCTION_GROUPS = [:default, :production, :staging].freeze
+      PRODUCTION_GROUPS = [:default, :production].freeze
 
       def app_name
         app_module.underscore
