@@ -1,3 +1,7 @@
+*Engineer 0.2.1*
+
+* Engine::ApplicationController extends ApplicationController if available.
+
 *Engineer 0.2.0*
 
 * Add app_name.require_dependencies initializer which loads the engine's Gemfile and requires its
