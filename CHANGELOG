@@ -1,5 +1,8 @@
 *Engineer 0.2.0*
 
+* Add app_name.require_dependencies initializer which loads the engine's Gemfile and requires its
+  default and production dependencies.
+
 * Drop staging dependencies from the generated gem's runtime dependencies.
 
 *Engineer 0.1.1*

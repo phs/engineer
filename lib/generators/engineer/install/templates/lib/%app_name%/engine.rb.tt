@@ -6,6 +6,18 @@ module <%= app_module %><%#%>
     ASSET_PREFIX = "<%= app_name %><%#%>"
     ENGINEER_VERSION = "<%= engineer_version %><%#%>"
 
+    initializer "<%= app_name %><%#%>.require_dependencies" do
+      require 'bundler'
+      gemfile = Bundler::Definition.from_gemfile(root.join('Gemfile'))
+      specs = gemfile.dependencies.select do |d|
+        d.name != 'engineer' and (d.groups & <%= PRODUCTION_GROUPS.inspect %><%#%>).any?
+      end
+
+      specs.collect { |s| s.autorequire || [s.name] }.flatten.each do |r|
+        require r
+      end
+    end
+
     initializer "<%= app_name %><%#%>.action_view.identifier_collection" do
       require 'action_view/template'
       class ActionView::Template
