@@ -22,7 +22,8 @@ class Engineer
 
         create_file File.join(nested_path, 'application_controller.rb') do
           content = File.read File.join(unnested_path, 'application_controller.rb')
-          content.gsub! "class ApplicationController", "class #{app_module}::ApplicationController"
+          content.gsub!("class ApplicationController < ActionController::Base",
+            "class #{app_module}::ApplicationController < defined?(ApplicationController) ? ApplicationController : ActionController::Base")
           content
         end
 
