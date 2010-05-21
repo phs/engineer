@@ -2,7 +2,7 @@
 # http://gravityblast.com/2009/08/11/testing-rails-generators-with-cucumber/
 
 require "rubygems"
-gem "railties", ">= 3.0.0.beta2"
+gem "railties", ">= 3.0.0.beta3"
 
 require "fileutils"
 require "tempfile"
