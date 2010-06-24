@@ -28,7 +28,7 @@ module Helpers
 
     unless File.exists?(in_workspace "apps", name)
       in_workspace "apps" do
-        run "rails #{name}"
+        run "rails new #{name}"
       end
 
       in_workspace "apps", @current_app do
